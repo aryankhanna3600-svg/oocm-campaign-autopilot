@@ -112,7 +112,8 @@ async function containerOf(path: string): Promise<"mov" | "matroska"> {
 const FF_OPTS = { timeout: 240_000, killSignal: "SIGKILL" as const, maxBuffer: 1 << 26 };
 const FF_BASE = ["-nostdin", "-hide_banner", "-loglevel", "error", "-protocol_whitelist", "file"];
 
-async function prepare(input: Uint8Array | { path: string }, o: CheckOptions) {
+/** Re-encode to a 720p H.264 MP4 (and a 16 kHz WAV) in a temp dir. Caller removes `dir`. */
+export async function prepare(input: Uint8Array | { path: string }, o: CheckOptions) {
   const dir = await mkdtemp(join(tmpdir(), "draftcheck-"));
   let src = join(dir, "in");
   const mp4 = join(dir, "draft.mp4");
