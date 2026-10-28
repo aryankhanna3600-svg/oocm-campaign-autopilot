@@ -556,10 +556,10 @@ function addUsage(a: MetaUsage, b?: MetaUsage): MetaUsage {
 }
 
 /** Shape the web app already renders: { key: { pass, detail } }, plus the evidence it ignores. */
-export function toDraftChecks(r: DraftCheckResult): Record<string, { pass: boolean; detail: string; verdict: Verdict; at_s: number | null; quote: string | null; sources: string[] }> {
+export function toDraftChecks(r: DraftCheckResult): Record<string, { pass: boolean; detail: string; label: string; verdict: Verdict; at_s: number | null; quote: string | null; sources: string[] }> {
   const out: Record<string, any> = {};
   for (const it of r.items) {
-    out[it.key] = { pass: it.verdict === "pass", detail: it.verdict === "needs_review" ? `Check by eye: ${it.detail}` : it.detail, verdict: it.verdict, at_s: it.at_s, quote: it.quote, sources: it.sources };
+    out[it.key] = { pass: it.verdict === "pass", detail: it.verdict === "needs_review" ? `Check by eye: ${it.detail}` : it.detail, label: it.label, verdict: it.verdict, at_s: it.at_s, quote: it.quote, sources: it.sources };
   }
   return out;
 }
