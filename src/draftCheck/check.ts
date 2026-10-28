@@ -563,3 +563,48 @@ export function toDraftChecks(r: DraftCheckResult): Record<string, { pass: boole
   }
   return out;
 }
+
+/** The numbers a brand report shows for one checked video. */
+export interface ReportNumbers {
+  duration_s: number;
+  /** Seconds the product is on screen: frames the object tracker found it in, over the sampling rate. Spark's from/to when SAM did not run. */
+  product_s: number | null;
+  product_share: number | null;
+  product_first_s: number | null;
+  /** First moment the brand is said or shown. */
+  brand_first_s: number | null;
+  brand_how: "said" | "shown" | null;
+  disclosed: boolean | null;
+  disclosure_how: string[];
+  other_brands: string[];
+}
+
+export function reportNumbers(r: DraftCheckResult, brand: string): ReportNumbers {
+  const item = (k: string) => r.items.find((i) => i.key === k);
+  const product = item("product_on_screen");
+  let productS: number | null = null;
+  if (r.productBoxes.length && r.fps > 0) {
+    productS = Math.min(r.durationS, new Set(r.productBoxes.map((b) => b.frame)).size / r.fps);
+  } else if (product?.verdict === "pass" && product.at_s != null && product.until_s != null) {
+    productS = Math.max(0, product.until_s - product.at_s);
+  } else if (product?.verdict === "fail") productS = 0;
+  const b = norm(brand);
+  const brandHits = r.items
+    .filter((i) => i.key.startsWith("must_say_") && i.verdict === "pass" && i.at_s != null && b && norm(i.label).includes(b))
+    .sort((x, y) => x.at_s! - y.at_s!);
+  const first = brandHits[0] ?? null;
+  const disclosure = item("ad_disclosure");
+  const how = disclosure?.verdict === "pass" ? disclosure.sources.map((s) => (s === "spark" ? "in the video" : s === "transcript" ? "said" : s)) : [];
+  const others = item("other_brands");
+  return {
+    duration_s: Math.round(r.durationS * 10) / 10,
+    product_s: productS == null ? null : Math.round(productS * 10) / 10,
+    product_share: productS == null || !r.durationS ? null : Math.round((productS / r.durationS) * 100) / 100,
+    product_first_s: product?.verdict !== "fail" ? (product?.at_s ?? null) : null,
+    brand_first_s: first?.at_s ?? null,
+    brand_how: first ? (first.detail.startsWith("Shown on screen") ? "shown" : "said") : null,
+    disclosed: disclosure ? disclosure.verdict === "pass" : null,
+    disclosure_how: Array.from(new Set(how)),
+    other_brands: others ? others.detail.replace(/^Also (named|shown): /, "").replace(/\. Not on the brief's banned list\.$/, "").split(", ").filter(Boolean) : [],
+  };
+}
