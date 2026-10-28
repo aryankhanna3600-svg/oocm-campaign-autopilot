@@ -1,0 +1,13 @@
+{
+  "name": "oocm-campaign-autopilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OOCM Campaign Autopilot: Meta's models run a creator campaign end to end. Built for the Meta Global AI Developer Hackathon (27 Oct to 4 Nov 2026).",
+  "type": "module",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "check": "node scripts/check.ts",
+    "probe": "node scripts/probe.ts"
+  },
+  "license": "MIT"
+}
