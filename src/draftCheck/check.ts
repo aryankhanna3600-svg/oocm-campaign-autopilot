@@ -155,7 +155,7 @@ const SPARK_SCHEMA = {
       language: { type: "string" },
       rules: {
         type: "array",
-        description: "Each do/don't from the brief that the video clearly breaks. Empty if none.",
+        description: "Each do/don't from the brief that the video clearly breaks, leaving out must-say lines, the ad disclosure and competitors (those are checked separately). Empty if none.",
         items: {
           type: "object",
           additionalProperties: false,
@@ -469,7 +469,7 @@ export async function checkDraft(video: Uint8Array, brief: Brief, o: CheckOption
       transcript: heard,
       productBoxes: boxes,
       fps: prep.fps,
-      usage: { spark: spark.usage, samFrames, audioSeconds: heard ? Math.floor(heard.durationMs / 1000) : 0 },
+      usage: { spark: addUsage(spark.usage, check?.usage), samFrames, audioSeconds: heard ? Math.floor(heard.durationMs / 1000) : 0 },
       models: [spark.model, ...(heard ? ["muse-voice-transcribe-1.0"] : []), ...(samFrames ? ["sam-3.1"] : [])],
       ms: Date.now() - t0,
     };
@@ -477,6 +477,11 @@ export async function checkDraft(video: Uint8Array, brief: Brief, o: CheckOption
     if (fileId) await deleteFile(fileId);
     await rm(prep.dir, { recursive: true, force: true });
   }
+}
+
+function addUsage(a: MetaUsage, b?: MetaUsage): MetaUsage {
+  if (!b) return a;
+  return { input_tokens: (a.input_tokens ?? 0) + (b.input_tokens ?? 0), output_tokens: (a.output_tokens ?? 0) + (b.output_tokens ?? 0), total_tokens: (a.total_tokens ?? 0) + (b.total_tokens ?? 0) };
 }
 
 /** Shape the web app already renders: { key: { pass, detail } }, plus the evidence it ignores. */
