@@ -76,7 +76,12 @@ export interface CheckOptions {
   /** Skip SAM (faster, cheaper); "shown" checks then rest on Spark alone. */
   noSam?: boolean;
   model?: string;
+  /** The creator's caption for the post, if any. A disclosure or brand tag there counts. */
+  caption?: string | null;
 }
+
+/** #ad, #sponsored, #paidpartnership, "paid partnership", #collab, विज्ञापन. */
+export const CAPTION_DISCLOSURE = /(^|\s)#(ad|ads|sponsored|paidpartnership|partner|collab)\b|paid partnership|sponsored by|विज्ञापन/i;
 
 // ── 1. prepare ─────────────────────────────────────────────────────────────
 
@@ -161,8 +166,15 @@ const SPARK_SCHEMA = {
         items: {
           type: "object",
           additionalProperties: false,
-          required: ["index", "line", "said", "at_s", "quote"],
-          properties: { index: { type: "integer", description: "The line's number in the brief." }, line: { type: "string" }, said: { type: "boolean" }, at_s: { type: ["number", "null"] }, quote: { type: ["string", "null"] } },
+          required: ["index", "line", "said", "shown_on_screen", "at_s", "quote"],
+          properties: {
+            index: { type: "integer", description: "The line's number in the brief." },
+            line: { type: "string" },
+            said: { type: "boolean" },
+            shown_on_screen: { type: "boolean", description: "True if the line, or the brand name or logo for a brand-name line, appears as on-screen text or graphics." },
+            at_s: { type: ["number", "null"] },
+            quote: { type: ["string", "null"] },
+          },
         },
       },
       must_show: {
@@ -182,6 +194,7 @@ const SPARK_SCHEMA = {
       },
       competitors: {
         type: "array",
+        description: "Every brand other than the campaign's own that is named aloud or visibly shown (logo, packaging, on-screen text).",
         items: {
           type: "object",
           additionalProperties: false,
@@ -210,7 +223,9 @@ Answer only from what is actually seen and heard in the video. Never assume.
 Give seconds from the start of the video for every piece of evidence.
 A must-say line counts as said if the meaning is said, in any language; quote the words actually spoken.
 An ad disclosure is "#ad", "ad", "advertisement", "paid partnership", "sponsored", or the same in Hindi (e.g. "विज्ञापन").
-List a competitor only if it is named aloud or its brand is visibly shown.
+List every other brand that is named aloud or visibly shown, under competitors.
+A brand-name line counts as shown_on_screen if the brand's name or logo is on screen.
+If the creator's caption is given, it is part of the post: an ad disclosure written there counts.
 Write the summary in plain, warm English to the creator.`;
 
 function briefText(b: Brief): string {
@@ -344,7 +359,7 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
         model: o.model,
         instructions: INSTRUCTIONS,
         content: [
-          { type: "input_text", text: `THE BRIEF\n${briefText(brief)}\n\nCheck the video below against it.` },
+          { type: "input_text", text: `THE BRIEF\n${briefText(brief)}${o.caption ? `\n\nTHE CREATOR'S CAPTION\n${o.caption.slice(0, 2200)}` : ""}\n\nCheck the video below against it.` },
           { type: "input_video", file_id: fileId },
         ],
         schema: SPARK_SCHEMA,
@@ -411,9 +426,14 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
       const sparkSaid = !!m.said;
       const excerpt = check ? (check.lines.get(i + 1) ?? null) : m.quote && said && transcriptSupport(m.quote, said) >= 0.6 ? m.quote : null;
       const heardSaid = !!excerpt;
+      const onScreen = !!m.shown_on_screen;
       let verdict: Verdict;
       let sources: string[];
-      if (!heard) {
+      if (onScreen && !(sparkSaid && heardSaid)) {
+        // Shown as text or logo: a mention even when the speech checks disagree.
+        verdict = "pass";
+        sources = heardSaid ? ["spark", "transcript"] : ["spark"];
+      } else if (!heard) {
         verdict = sparkSaid ? "pass" : "fail";
         sources = ["spark"];
       } else if (sparkSaid && heardSaid) {
@@ -429,7 +449,9 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
       const quote = excerpt ?? m.quote ?? null;
       const detail =
         verdict === "pass"
-          ? `Said${fmt(m.at_s)}: "${quote}"`
+          ? onScreen && !(sparkSaid && heardSaid)
+            ? `Shown on screen${fmt(m.at_s)}${sparkSaid ? " and said" : ""}.`
+            : `Said${fmt(m.at_s)}: "${quote}"`
           : verdict === "fail"
             ? `Not said: "${line}". Add it in your own words.`
             : `Not sure "${line}" is said${fmt(m.at_s)}: the two checks disagree. Please listen.`;
@@ -449,12 +471,14 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
       if (heardDisclosure) d.quote = heardDisclosure;
       let verdict: Verdict;
       const sources = ["spark"];
-      if (d.on_screen || spokenOk || (d.spoken && !heard)) {
+      const inCaption = !!o.caption && CAPTION_DISCLOSURE.test(o.caption);
+      if (d.on_screen || spokenOk || (d.spoken && !heard) || inCaption) {
         verdict = "pass";
         if (spokenOk) sources.push("transcript");
+        if (inCaption) sources.push("caption");
       } else if (d.spoken) verdict = "needs_review";
       else verdict = "fail";
-      const how = [d.spoken ? "said" : "", d.on_screen ? "shown on screen" : ""].filter(Boolean).join(" and ");
+      const how = [spokenOk || (d.spoken && !heard) ? "said" : "", d.on_screen ? "shown on screen" : "", inCaption ? "in the caption" : ""].filter(Boolean).join(" and ");
       items.push({
         key: "ad_disclosure",
         label: "Ad disclosure",
@@ -472,7 +496,10 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
     {
       const named = (s.competitors ?? []) as { name: string; how: string; at_s: number | null }[];
       const listed = brief.competitors.map(norm);
-      const hits = named.filter((c) => !listed.length || listed.some((l) => norm(c.name).includes(l) || l.includes(norm(c.name))));
+      const own = norm(brief.brand);
+      const others = named.filter((c) => norm(c.name) && !norm(c.name).includes(own) && !own.includes(norm(c.name)));
+      const hits = others.filter((c) => listed.some((l) => norm(c.name).includes(l) || l.includes(norm(c.name))));
+      const info = others.filter((c) => !hits.includes(c));
       const heardHits = brief.competitors.filter((c) => said && norm(said).includes(norm(c)));
       const all = Array.from(new Set([...hits.map((h) => h.name), ...heardHits]));
       const verdict: Verdict = all.length ? "fail" : "pass";
@@ -487,6 +514,11 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
         sources: heardHits.length ? ["spark", "transcript"] : ["spark"],
         confidence: all.length ? 0.9 : 0.75,
       });
+      // Other brands that appear but are not banned: for the brand to see, never a fail.
+      if (info.length) {
+        const names = Array.from(new Set(info.map((c) => c.name)));
+        items.push({ key: "other_brands", label: "Other brands in the video", verdict: "pass", detail: `Also ${info.some((c) => c.how === "said") ? "named" : "shown"}: ${names.join(", ")}. Not on the brief's banned list.`, at_s: info[0]?.at_s ?? null, until_s: null, quote: null, sources: ["spark"], confidence: 0.7 });
+      }
     }
 
     // Brand rules the video breaks.
