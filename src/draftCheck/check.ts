@@ -16,7 +16,7 @@
  * Built during the Meta Global AI Developer Hackathon (27 Oct to 4 Nov 2026).
  */
 import { execFile } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, open, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
@@ -80,24 +80,61 @@ export interface CheckOptions {
 
 // ── 1. prepare ─────────────────────────────────────────────────────────────
 
-async function prepare(input: Uint8Array, o: CheckOptions) {
+/** Thrown when the input is not a video container we accept. */
+export class NotAVideo extends Error {}
+
+/**
+ * Only real MP4/MOV or WebM/Matroska files go to ffmpeg, forced to that demuxer
+ * and to local files only. ffmpeg picks a demuxer by content, so without this a
+ * "video" that is really an HLS playlist or concat list could make it read
+ * local files or internal URLs.
+ */
+async function containerOf(path: string): Promise<"mov" | "matroska"> {
+  const fh = await open(path, "r");
+  try {
+    const head = Buffer.alloc(12);
+    await fh.read(head, 0, 12, 0);
+    const box = head.subarray(4, 8).toString("latin1");
+    if (["ftyp", "moov", "mdat", "wide", "free", "skip"].includes(box)) return "mov";
+    if (head.readUInt32BE(0) === 0x1a45dfa3) return "matroska";
+  } finally {
+    await fh.close();
+  }
+  throw new NotAVideo("The file is not an MP4, MOV or WebM video.");
+}
+
+// Every ffmpeg run is time-boxed and killed hard, so a broken file can't hold the worker.
+const FF_OPTS = { timeout: 240_000, killSignal: "SIGKILL" as const, maxBuffer: 1 << 26 };
+const FF_BASE = ["-nostdin", "-hide_banner", "-loglevel", "error", "-protocol_whitelist", "file"];
+
+async function prepare(input: Uint8Array | { path: string }, o: CheckOptions) {
   const dir = await mkdtemp(join(tmpdir(), "draftcheck-"));
-  const src = join(dir, "in");
+  let src = join(dir, "in");
   const mp4 = join(dir, "draft.mp4");
   const wav = join(dir, "audio.wav");
-  await writeFile(src, input);
+  if (input instanceof Uint8Array) await writeFile(src, input);
+  else src = input.path;
   const ff = o.ffmpeg ?? "ffmpeg";
-  // Re-encode only when needed: SAM wants H.264/H.265 MP4, Spark wants MP4.
-  // Cap at 10 minutes (Voice Transcribe and SAM limits) and 720p (cost).
-  await run(ff, ["-loglevel", "error", "-y", "-i", src, "-t", "600", "-vf", "scale='min(720,iw)':-2", "-r", "25", "-c:v", "libx264", "-preset", "veryfast", "-pix_fmt", "yuv420p", "-c:a", "aac", "-movflags", "+faststart", mp4], { maxBuffer: 1 << 26 });
+  const format = await containerOf(src).catch(async (e) => {
+    await rm(dir, { recursive: true, force: true });
+    throw e;
+  });
+  try {
+    // Re-encode: SAM wants H.264/H.265 MP4, Spark wants MP4.
+    // Cap at 10 minutes (Voice Transcribe and SAM limits) and 720p (cost).
+    await run(ff, [...FF_BASE, "-y", "-f", format, "-i", src, "-t", "600", "-vf", "scale='min(720,iw)':-2", "-r", "25", "-c:v", "libx264", "-preset", "veryfast", "-threads", "2", "-pix_fmt", "yuv420p", "-c:a", "aac", "-movflags", "+faststart", mp4], FF_OPTS);
+  } catch (e) {
+    await rm(dir, { recursive: true, force: true });
+    throw e;
+  }
   let hasAudio = true;
   try {
-    await run(ff, ["-loglevel", "error", "-y", "-i", mp4, "-vn", "-ac", "1", "-ar", "16000", "-c:a", "pcm_s16le", "-map_metadata", "-1", wav]);
+    await run(ff, [...FF_BASE, "-y", "-i", mp4, "-vn", "-ac", "1", "-ar", "16000", "-c:a", "pcm_s16le", "-map_metadata", "-1", wav], FF_OPTS);
   } catch {
     hasAudio = false;
   }
   // Duration from ffmpeg's own banner (no ffprobe needed on servers).
-  const probe = await run(ff, ["-hide_banner", "-i", mp4]).catch((e: any) => e);
+  const probe = await run(ff, ["-nostdin", "-hide_banner", "-i", mp4], FF_OPTS).catch((e: any) => e);
   const m = String(probe?.stderr ?? "").match(/Duration: (\d+):(\d+):([\d.]+)/);
   const durationS = m ? Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]) : 0;
   return { dir, mp4, wav: hasAudio ? wav : null, durationS, fps: 25 };
@@ -292,7 +329,8 @@ const fmt = (s: number | null) => (s == null ? "" : ` at ${Math.floor(s / 60)}:$
 
 // ── the pipeline ───────────────────────────────────────────────────────────
 
-export async function checkDraft(video: Uint8Array, brief: Brief, o: CheckOptions = {}): Promise<DraftCheckResult> {
+/** video: the bytes, or { path } to a file on disk (the server streams downloads to disk). */
+export async function checkDraft(video: Uint8Array | { path: string }, brief: Brief, o: CheckOptions = {}): Promise<DraftCheckResult> {
   const t0 = Date.now();
   const prep = await prepare(video, o);
   let fileId: string | null = null;
