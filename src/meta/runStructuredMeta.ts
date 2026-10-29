@@ -65,7 +65,10 @@ export interface RunStructuredMetaArgs<T> {
   model?: string;
   /** Default 60s for builder text calls. */
   timeoutMs?: number;
-  logUsage?: (u: { feature: string; model: string; inputTokens?: number; outputTokens?: number; costUsd: number; refId?: number }) => void | Promise<void>;
+  /** Overall Meta budget for the call (default 50s): attempts share it, and a
+   *  timeout/abort never retries — the caller falls back to Claude instead. */
+  budgetMs?: number;
+  logUsage?: (u: { feature: string; model: string; inputTokens?: number; outputTokens?: number; costUsd: number; refId?: number; searches?: number }) => void | Promise<void>;
 }
 
 export type MetaResult<T> =
@@ -74,9 +77,14 @@ export type MetaResult<T> =
 
 export const SPARK_INPUT_PER_M = 1.25;
 export const SPARK_OUTPUT_PER_M = 4.25;
+/** Meta web-search tool calls ($2.50/1k queries, Oct 2026). */
+export const WEB_SEARCH_PER_1K = 2.5;
 
 export const estimateSparkCostUsd = (input?: number, output?: number): number =>
   (Number(input ?? 0) / 1e6) * SPARK_INPUT_PER_M + (Number(output ?? 0) / 1e6) * SPARK_OUTPUT_PER_M;
+
+export const estimateSearchCostUsd = (searches?: number): number =>
+  (Number(searches ?? 0) / 1000) * WEB_SEARCH_PER_1K;
 
 const textOf = (m: MetaMessage): string =>
   typeof m.content === "string" ? m.content : m.content.filter((b) => b?.type === "text" && typeof b.text === "string").map((b) => String(b.text)).join("\n");
@@ -111,6 +119,8 @@ export async function runStructuredMeta<T>(args: RunStructuredMetaArgs<T>): Prom
   const content = [{ type: "input_text" as const, text: textOf(args.messages[0]) }];
   const tools = mapTools(args.tools); // throws loud on unknown tools
   const timeoutMs = args.timeoutMs ?? 60_000;
+  const budgetMs = args.budgetMs ?? 50_000;
+  const deadline = Date.now() + Math.max(budgetMs, 1);
   let cap = Math.max(args.maxOutputTokens ?? 4000, 1500);
 
   const fail = (kind: MetaFailureKind, message: string): MetaResult<T> => ({
@@ -120,6 +130,8 @@ export async function runStructuredMeta<T>(args: RunStructuredMetaArgs<T>): Prom
   // One call at the given strictness. Returns "retry-relaxed" / "retry-cap" /
   // a finished result.
   const attempt = async (strict: boolean): Promise<MetaResult<T> | "retry-relaxed" | "retry-cap"> => {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) return fail("api", `Meta budget exhausted (${budgetMs}ms).`);
     let r;
     try {
       r = await respond<unknown>({
@@ -130,10 +142,15 @@ export async function runStructuredMeta<T>(args: RunStructuredMetaArgs<T>): Prom
         maxOutputTokens: cap,
         effort: args.effort,
         ...(tools ? { tools } : {}),
-        timeoutMs,
+        timeoutMs: Math.min(timeoutMs, remaining),
         strict,
       });
     } catch (e: any) {
+      // A timeout/abort never retries: the attempt already spent the budget,
+      // and a second slow call cannot fit what is left. Straight to fallback.
+      if (/abort/i.test(String(e?.name ?? "")) || /abort|timeout|timed out|ETIMEDOUT/i.test(String(e?.message ?? e))) {
+        return fail("api", `Meta timed out after ${budgetMs - Math.max(deadline - Date.now(), 0)}ms.`);
+      }
       if (e instanceof MetaIncompleteError) {
         return e.reason === "max_output_tokens" ? "retry-cap" : fail("refusal", `Stopped: ${e.reason}.`);
       }
@@ -142,9 +159,10 @@ export async function runStructuredMeta<T>(args: RunStructuredMetaArgs<T>): Prom
       if (/refusal/i.test(String(e?.message ?? e))) return fail("refusal", "The model refused this request.");
       return strict ? "retry-relaxed" : fail("api", String(e?.message ?? e));
     }
-    const costUsd = estimateSparkCostUsd(r.usage.input_tokens, r.usage.output_tokens);
+    const searches = Number((r.usage as any)?.web_search_calls ?? 0);
+    const costUsd = estimateSparkCostUsd(r.usage.input_tokens, r.usage.output_tokens) + estimateSearchCostUsd(searches);
     try {
-      await args.logUsage?.({ feature: args.feature, model: r.model || model, inputTokens: r.usage.input_tokens, outputTokens: r.usage.output_tokens, costUsd, refId: args.refId });
+      await args.logUsage?.({ feature: args.feature, model: r.model || model, inputTokens: r.usage.input_tokens, outputTokens: r.usage.output_tokens, costUsd, refId: args.refId, ...(searches > 0 ? { searches } : {}) });
     } catch { /* usage logging never fails the call */ }
     const parsed = args.schema.safeParse(r.data) as { success: boolean; data?: T; error?: unknown };
     if (!parsed.success) {

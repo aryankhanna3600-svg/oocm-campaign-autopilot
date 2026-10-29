@@ -39,6 +39,8 @@ export interface MetaUsage {
   output_tokens?: number;
   total_tokens?: number;
   video_frames_processed?: number;
+  /** Web-search tool calls on the response, when the API reports them. */
+  web_search_calls?: number;
 }
 
 function key(): string {
