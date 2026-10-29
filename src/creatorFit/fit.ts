@@ -166,9 +166,55 @@ const FIT_SCHEMA = {
 const FIT_INSTRUCTIONS = `You decide how well a creator fits a brand's campaign, from a profile built by watching their recent reels.
 Score 0-100: 80+ strong, 60-79 good, 40-59 weak, under 40 poor.
 Weigh niche and audience match most, then on-camera style and hook strength, then production quality.
-Recent work for a competitor is a risk, not an automatic no. Never invent facts that are not in the profile.`;
+Recent work for a competitor is a risk, not an automatic no. Never invent facts that are not in the profile.
+Some reels were withheld for brand safety and appear only as a WITHHELD line naming their flag: never present a withheld reel as a positive, never describe its content, and draw every reason and the pitch only from the summaries shown in full. A withheld reel may still appear in risks.`;
 
-export async function fitScore(profile: CreatorProfile, brief: FitBrief, o: { model?: string } = {}): Promise<{ fit: FitResult; usage: MetaUsage }> {
+/** What a flagged reel contributed, so the scorer can un-see it. Built by the
+ * caller from the full reel array (the aggregated profile can't say which
+ * summary came from which reel). */
+export interface FlaggedEvidence {
+  summaries: string[];
+  brands: string[];
+  flags: string[];
+}
+
+/**
+ * Strip a flagged reel's citable content from the evidence the model sees:
+ * its summaries leave `summaries`, its brands leave `brands_worked_with`.
+ * Aggregate tallies (niches, formats) stay — a niche tag is not a reel
+ * citation — and the flags themselves stay visible so the model can weigh
+ * risk. Pure.
+ */
+export function withoutFlaggedEvidence(profile: CreatorProfile, flagged: FlaggedEvidence): CreatorProfile {
+  const badS = new Set(flagged.summaries.map((s) => s.trim()).filter(Boolean));
+  const badB = new Set(flagged.brands.map((b) => b.trim().toLowerCase()).filter(Boolean));
+  return {
+    ...profile,
+    summaries: (profile.summaries ?? []).filter((s) => !badS.has(String(s).trim())),
+    brands_worked_with: (profile.brands_worked_with ?? []).filter((b) => !badB.has(String(b).trim().toLowerCase())),
+  };
+}
+
+/**
+ * Collect what the flagged reels contributed, from the full reel array with
+ * per-reel safety_flags (profiling output, not the aggregated profile). Pure.
+ * No flagged reels → empty arrays, and fitScore behaves exactly as before.
+ */
+export function flaggedEvidenceFromReels(reels: any[]): FlaggedEvidence {
+  const flagged = (Array.isArray(reels) ? reels : []).filter(
+    (r) => Array.isArray(r?.safety_flags) && r.safety_flags.length > 0);
+  return {
+    summaries: flagged.map((r) => String(r.summary ?? "")).map((s) => s.trim()).filter(Boolean),
+    brands: flagged.flatMap((r) => r?.brands_shown ?? []).map((b) => String(b).trim()).filter(Boolean),
+    flags: flagged.flatMap((r) => r?.safety_flags ?? []).map((f) => String(f).trim()).filter(Boolean),
+  };
+}
+
+export async function fitScore(profile: CreatorProfile, brief: FitBrief, o: { model?: string; withheld?: FlaggedEvidence } = {}): Promise<{ fit: FitResult; usage: MetaUsage }> {
+  const shown = o.withheld ? withoutFlaggedEvidence(profile, o.withheld) : profile;
+  const withheldLine = o.withheld && o.withheld.flags.length
+    ? `WITHHELD for brand safety (${o.withheld.flags.length} reel${o.withheld.flags.length === 1 ? "" : "s"} shown to the model only as flags): ${[...new Set(o.withheld.flags)].join(", ")}`
+    : "";
   const text = [
     "THE BRIEF",
     `Brand: ${brief.brand}`,
@@ -181,7 +227,8 @@ export async function fitScore(profile: CreatorProfile, brief: FitBrief, o: { mo
     brief.competitors?.length ? `Competitors: ${brief.competitors.join(", ")}` : "",
     "",
     "THE CREATOR (from their reels)",
-    JSON.stringify(profile),
+    JSON.stringify(shown),
+    withheldLine,
   ].filter(Boolean).join("\n");
   const r = await respond<FitResult>({ model: o.model, instructions: FIT_INSTRUCTIONS, content: [{ type: "input_text", text }], schema: FIT_SCHEMA, maxOutputTokens: 3000, effort: "low" });
   return { fit: r.data, usage: r.usage };
