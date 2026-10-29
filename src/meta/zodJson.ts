@@ -34,7 +34,10 @@ const defOf = (schema: unknown): any => (schema as any)?._zod?.def;
 function convertInner(schema: unknown, path: string): JsonSchema {
   const def = defOf(schema);
   const t = def?.type;
-  const desc = typeof def.description === "string" && def.description ? { description: def.description } : {};
+  // zod v4 .describe() lives on the schema object (and the global registry),
+  // NOT in _zod.def — read it directly, at every level including wrappers.
+  const own = (schema as any)?.description;
+  const desc = typeof own === "string" && own ? { description: own } : {};
 
   switch (t) {
     case "object": {
@@ -85,14 +88,21 @@ function nodeOf(s: unknown, path: string): { schema: JsonSchema; optional: boole
   const def = defOf(s);
   if (def?.type === "optional") {
     const inner = nodeOf(def.innerType, path);
-    return { schema: inner.schema, optional: true };
+    return { schema: withDesc(inner.schema, s), optional: true };
   }
   if (def?.type === "nullable") {
     const inner = nodeOf(def.innerType, path);
     const it = (inner.schema as any).type;
-    return { schema: { ...inner.schema, type: Array.isArray(it) ? [...it, "null"] : [it, "null"] }, optional: inner.optional };
+    return { schema: withDesc({ ...inner.schema, type: Array.isArray(it) ? [...it, "null"] : [it, "null"] }, s), optional: inner.optional };
   }
   return { schema: convertInner(s, path), optional: false };
+}
+
+/** A wrapper's own .describe() (e.g. z.string().nullable().describe("…")). */
+function withDesc(schema: JsonSchema, s: unknown): JsonSchema {
+  const own = (s as any)?.description;
+  if (typeof own !== "string" || !own) return schema;
+  return { ...schema, description: own };
 }
 
 /**

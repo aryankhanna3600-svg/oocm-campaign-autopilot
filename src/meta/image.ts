@@ -108,34 +108,6 @@ export async function storyboardGenerate(
 }
 
 /**
- * The brand's own product photo, bounded: 8MB cap, png/jpeg/webp only,
- * redirects followed. null = no usable photo, use the generations door.
- * Never throws: any fetch problem is a null.
- */
-export async function fetchProductPhoto(url: string, timeoutMs = 30_000): Promise<{ bytes: Uint8Array; mime: string } | null> {
-  try {
-    if (!/^https?:\/\//i.test(url)) return null;
-    const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), timeoutMs);
-    try {
-      const res = await fetch(url, { signal: ctl.signal, redirect: "follow" });
-      if (!res.ok) return null;
-      const mime = (res.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
-      if (mime !== "image/png" && mime !== "image/jpeg" && mime !== "image/webp") return null;
-      const len = Number(res.headers.get("content-length") ?? 0);
-      if (Number.isFinite(len) && len > 0 && len > 8 * 1024 * 1024) return null;
-      const buf = new Uint8Array(await res.arrayBuffer());
-      if (!buf.length || buf.length > 8 * 1024 * 1024) return null;
-      return { bytes: buf, mime };
-    } finally {
-      clearTimeout(timer);
-    }
-  } catch {
-    return null;
-  }
-}
-
-/**
  * Concept prompt for a frame, from an option card's own words. Product name
  * goes in so the frame is about the right thing; India style cues only when
  * the brief says India; never real faces or celebrities (no likeness to copy).
