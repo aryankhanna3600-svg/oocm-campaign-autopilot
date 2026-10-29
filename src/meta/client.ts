@@ -24,6 +24,16 @@ export class MetaApiError extends Error {
   }
 }
 
+/** The response stopped before completing (usually max_output_tokens on a reasoning model). Carries a retry decision, not just text. */
+export class MetaIncompleteError extends MetaApiError {
+  readonly reason: string;
+  constructor(reason: string, body: string) {
+    super(200, `incomplete (${reason}): ${body.slice(0, 300)}`);
+    this.name = "MetaIncompleteError";
+    this.reason = reason;
+  }
+}
+
 export interface MetaUsage {
   input_tokens?: number;
   output_tokens?: number;
@@ -78,6 +88,11 @@ export interface RespondArgs {
   schema: { name: string; schema: Record<string, unknown> };
   maxOutputTokens?: number;
   effort?: "minimal" | "low" | "medium" | "high";
+  /** Structured-output strictness. strict:false + local parse is the retry lane. */
+  strict?: boolean;
+  /** Responses API tools, e.g. [{type:"web_search"}] ($2.50/1k queries). */
+  tools?: Array<Record<string, unknown>>;
+  timeoutMs?: number;
 }
 
 export interface RespondResult<T> {
@@ -97,11 +112,16 @@ export async function respond<T>(a: RespondArgs): Promise<RespondResult<T>> {
       input: [{ type: "message", role: "user", content: a.content }],
       max_output_tokens: a.maxOutputTokens ?? 8000,
       ...(a.effort ? { reasoning: { effort: a.effort } } : {}),
-      text: { format: { type: "json_schema", name: a.schema.name, schema: a.schema.schema, strict: true } },
+      ...(a.tools?.length ? { tools: a.tools } : {}),
+      text: { format: { type: "json_schema", name: a.schema.name, schema: a.schema.schema, strict: a.strict ?? true } },
       store: false,
     }),
-  });
+  }, a.timeoutMs ?? 180_000);
   const json: any = await res.json();
+  if (json.status === "incomplete") {
+    const reason = String(json.incomplete_details?.reason ?? "unknown");
+    throw new MetaIncompleteError(reason, JSON.stringify(json.incomplete_details ?? {}));
+  }
   if (json.status && json.status !== "completed") {
     throw new MetaApiError(200, `response ${json.status}: ${JSON.stringify(json.incomplete_details ?? json.error ?? {})}`);
   }
