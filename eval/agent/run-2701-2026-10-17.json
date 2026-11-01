@@ -1,0 +1,166 @@
+{
+  "campaign_id": 2701,
+  "campaign_name": "Sufi Night at Sorry Sugar M3M 65th Avenue · Fri 16 Oct",
+  "day": "2026-10-17",
+  "phase": "closed_to_apply",
+  "facts_hash": "ded0b5e03dea740b",
+  "facts": [
+    {
+      "id": "phase",
+      "detail": "Sufi Night at Sorry Sugar M3M 65th Avenue · Fri 16 Oct is closed_to_apply."
+    },
+    {
+      "id": "applicants",
+      "detail": "Nobody has applied yet (5 creators wanted)."
+    },
+    {
+      "id": "fit",
+      "detail": "No fit scores yet."
+    },
+    {
+      "id": "safety",
+      "detail": "No safety flags on live applicants."
+    },
+    {
+      "id": "drafts_waiting",
+      "detail": "No drafts waiting on the brand."
+    },
+    {
+      "id": "pieces_past_due",
+      "detail": "Nothing past its date."
+    },
+    {
+      "id": "silent_creators",
+      "detail": "Every active creator has sent something or is still in time."
+    },
+    {
+      "id": "brand_activity",
+      "detail": "No brand-attributed action on this campaign up to this day (reconstructed; app last-seen is not time-travelable and is omitted)."
+    },
+    {
+      "id": "apply_by",
+      "detail": "Creators can apply until 2026-10-16."
+    },
+    {
+      "id": "budget",
+      "detail": "No budget stated on the campaign."
+    },
+    {
+      "id": "agent_history",
+      "detail": "The agent did not exist yet; no agent history."
+    }
+  ],
+  "applicants": {},
+  "wanted": 5,
+  "apply_days_left": -1,
+  "waiting_drafts": 0,
+  "pieces_past_due": 0,
+  "silent_pieces": 0,
+  "overdue": false,
+  "runs": [
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 801,
+        "input_tokens_details": {
+          "cached_tokens": 497
+        },
+        "output_tokens": 530,
+        "output_tokens_details": {
+          "reasoning_tokens": 411
+        },
+        "total_tokens": 1331
+      },
+      "cost_usd": 0.0032537500000000006,
+      "latency_ms": 3032,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "flag_admin",
+        "admin_note": "0 applicants for 5 wanted, apply window closed 2026-10-16, event was 2026-10-16 (yesterday vs Today 2026-10-17) - needs human to close/cancel.",
+        "confidence": 0.9,
+        "diagnosis": "No one applied for 5 slots and the apply window closed Oct 16 with the event already past.",
+        "fact_ids": [
+          "phase",
+          "applicants",
+          "apply_by"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": null
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 801,
+        "input_tokens_details": {
+          "cached_tokens": 497
+        },
+        "output_tokens": 482,
+        "output_tokens_details": {
+          "reasoning_tokens": 355
+        },
+        "total_tokens": 1283
+      },
+      "cost_usd": 0.0030497500000000004,
+      "latency_ms": 2795,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "flag_admin",
+        "admin_note": "0 applicants for 5 wanted spots, apply window closed 2026-10-16, event was 2026-10-16 (yesterday vs Today 2026-10-17) with stage closed_to_apply - needs human to cancel/close or reschedule.",
+        "confidence": 0.95,
+        "diagnosis": "Campaign got 0 applicants for 5 spots and the apply window and event date have already passed.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "phase"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": null
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 801,
+        "input_tokens_details": {
+          "cached_tokens": 753
+        },
+        "output_tokens": 603,
+        "output_tokens_details": {
+          "reasoning_tokens": 479
+        },
+        "total_tokens": 1404
+      },
+      "cost_usd": 0.0035640000000000003,
+      "latency_ms": 3309,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "flag_admin",
+        "admin_note": "0 applicants for 5 wanted, apply-by 2026-10-16 has passed as of Today 2026-10-17, stage closed_to_apply for event on Fri 16 Oct – window closed with no funnel to act on, needs human review for next steps.",
+        "confidence": 0.9,
+        "diagnosis": "No creators applied and the apply window and event date have already passed.",
+        "fact_ids": [
+          "phase",
+          "applicants",
+          "apply_by"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": null
+    }
+  ],
+  "assumptions": [],
+  "leakage": [
+    "prod snapshot is read at replay time; rows deleted since (if any) are invisible",
+    "brand tier/override/lock state is current, not as-of-day"
+  ]
+}

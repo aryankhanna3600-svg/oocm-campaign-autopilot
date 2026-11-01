@@ -1,0 +1,491 @@
+{
+ "creator-3_Dcdz5BLic73.mp4": {
+  "brand": {
+   "api": true,
+   "open": true
+  },
+  "disclosure": {
+   "api": false,
+   "open": false
+  },
+  "product": {
+   "api": "fail",
+   "open": false
+  },
+  "lowSugar": {
+   "api": false,
+   "open": false
+  },
+  "otherBrands": {
+   "api": [
+    "bistro by Blinkit",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Starbucks"
+   ],
+   "open": [
+    "Bistro by Blinkit",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Starbucks",
+    "Subway"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 6282,
+   "total_tokens": 7552,
+   "completion_tokens": 1270,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1196
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 1196
+   }
+  },
+  "ms": 16542,
+  "apiMs": 49326,
+  "raw": {
+   "brand_mentioned": true,
+   "brand_at_s": 10,
+   "product_on_screen": false,
+   "product_from_s": null,
+   "low_sugar_said": false,
+   "disclosure_present": false,
+   "other_brands": [
+    "Bistro by Blinkit",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Starbucks",
+    "Subway"
+   ]
+  }
+ },
+ "creator-6_DcjJo4LCKWu.mp4": {
+  "brand": {
+   "api": true,
+   "open": true
+  },
+  "disclosure": {
+   "api": false,
+   "open": false
+  },
+  "product": {
+   "api": "needs_review",
+   "open": false
+  },
+  "lowSugar": {
+   "api": false,
+   "open": true
+  },
+  "otherBrands": {
+   "api": [
+    "bistro",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Sleepy Owl"
+   ],
+   "open": [
+    "Bistro",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Sleepy Owl"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 9767,
+   "total_tokens": 11510,
+   "completion_tokens": 1743,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1674
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 1674
+   }
+  },
+  "ms": 24852,
+  "apiMs": 49625,
+  "raw": {
+   "brand_mentioned": true,
+   "brand_at_s": 9,
+   "product_on_screen": false,
+   "product_from_s": null,
+   "low_sugar_said": true,
+   "disclosure_present": false,
+   "other_brands": [
+    "Bistro",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Sleepy Owl"
+   ]
+  }
+ },
+ "creator-1_DcqT32kSpIg.mp4": {
+  "brand": {
+   "api": true,
+   "open": true
+  },
+  "disclosure": {
+   "api": false,
+   "open": false
+  },
+  "product": {
+   "api": "fail",
+   "open": false
+  },
+  "lowSugar": {
+   "api": false,
+   "open": true
+  },
+  "otherBrands": {
+   "api": [
+    "bistro by Blinkit",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Sleepy Owl Coffee"
+   ],
+   "open": [
+    "Bistro",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Sleepy Owl"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 9772,
+   "total_tokens": 11283,
+   "completion_tokens": 1511,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1442
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 1442
+   }
+  },
+  "ms": 21982,
+  "apiMs": 50568,
+  "raw": {
+   "brand_mentioned": true,
+   "brand_at_s": 8,
+   "product_on_screen": false,
+   "product_from_s": null,
+   "low_sugar_said": true,
+   "disclosure_present": false,
+   "other_brands": [
+    "Bistro",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Sleepy Owl"
+   ]
+  }
+ },
+ "creator-2_DcgEeLpMlrW.mp4": {
+  "brand": {
+   "api": true,
+   "open": true
+  },
+  "disclosure": {
+   "api": false,
+   "open": false
+  },
+  "product": {
+   "api": "fail",
+   "open": true
+  },
+  "lowSugar": {
+   "api": false,
+   "open": true
+  },
+  "otherBrands": {
+   "api": [
+    "Bistro by Blinkit",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Starbucks"
+   ],
+   "open": [
+    "Bistro by Blinkit",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Starbucks"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 8013,
+   "total_tokens": 9676,
+   "completion_tokens": 1663,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1592
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 1592
+   }
+  },
+  "ms": 22926,
+  "apiMs": 43690,
+  "raw": {
+   "brand_mentioned": true,
+   "brand_at_s": 6,
+   "product_on_screen": true,
+   "product_from_s": 0,
+   "low_sugar_said": true,
+   "disclosure_present": false,
+   "other_brands": [
+    "Bistro by Blinkit",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Starbucks"
+   ]
+  }
+ },
+ "creator-4_Dc2vTxhTfsm.mp4": {
+  "brand": {
+   "api": true,
+   "open": true
+  },
+  "disclosure": {
+   "api": false,
+   "open": false
+  },
+  "product": {
+   "api": "fail",
+   "open": false
+  },
+  "lowSugar": {
+   "api": false,
+   "open": true
+  },
+  "otherBrands": {
+   "api": [
+    "Bistro",
+    "Third Wave Coffee"
+   ],
+   "open": [
+    "bistro",
+    "Third Wave Coffee"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 9775,
+   "total_tokens": 11464,
+   "completion_tokens": 1689,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1628
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 1628
+   }
+  },
+  "ms": 28179,
+  "apiMs": 33862,
+  "raw": {
+   "brand_mentioned": true,
+   "brand_at_s": 12,
+   "product_on_screen": false,
+   "product_from_s": null,
+   "low_sugar_said": true,
+   "disclosure_present": false,
+   "other_brands": [
+    "bistro",
+    "Third Wave Coffee"
+   ]
+  }
+ },
+ "creator-5_DcjJO1fypUo.mp4": {
+  "brand": {
+   "api": true,
+   "open": true
+  },
+  "disclosure": {
+   "api": false,
+   "open": false
+  },
+  "product": {
+   "api": "pass",
+   "open": true
+  },
+  "lowSugar": {
+   "api": false,
+   "open": true
+  },
+  "otherBrands": {
+   "api": [
+    "Bistro by Blinkit",
+    "Blue Tokai",
+    "Sleepy Owl"
+   ],
+   "open": [
+    "Bistro",
+    "Blue Tokai",
+    "Sleepy Owl"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 5654,
+   "total_tokens": 7342,
+   "completion_tokens": 1688,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1623
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 1623
+   }
+  },
+  "ms": 23783,
+  "apiMs": 45113,
+  "raw": {
+   "brand_mentioned": true,
+   "brand_at_s": 10,
+   "product_on_screen": true,
+   "product_from_s": 0,
+   "low_sugar_said": true,
+   "disclosure_present": false,
+   "other_brands": [
+    "Bistro",
+    "Blue Tokai",
+    "Sleepy Owl"
+   ]
+  }
+ },
+ "creator-7_Dc8dXaMMwey.mp4": {
+  "brand": {
+   "api": true,
+   "open": true
+  },
+  "disclosure": {
+   "api": false,
+   "open": false
+  },
+  "product": {
+   "api": "pass",
+   "open": false
+  },
+  "lowSugar": {
+   "api": false,
+   "open": true
+  },
+  "otherBrands": {
+   "api": [
+    "Bistro",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Sleepy Owl"
+   ],
+   "open": [
+    "bistro",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Sleepy Owl"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 5706,
+   "total_tokens": 7156,
+   "completion_tokens": 1450,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1381
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 1381
+   }
+  },
+  "ms": 23196,
+  "apiMs": 52255,
+  "raw": {
+   "brand_mentioned": true,
+   "brand_at_s": 8,
+   "product_on_screen": false,
+   "product_from_s": null,
+   "low_sugar_said": true,
+   "disclosure_present": false,
+   "other_brands": [
+    "bistro",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Sleepy Owl"
+   ]
+  }
+ },
+ "creator-8_DcfJOxWTVt_.mp4": {
+  "brand": {
+   "api": true,
+   "open": true
+  },
+  "disclosure": {
+   "api": false,
+   "open": false
+  },
+  "product": {
+   "api": "pass",
+   "open": false
+  },
+  "lowSugar": {
+   "api": false,
+   "open": false
+  },
+  "otherBrands": {
+   "api": [
+    "Bistro",
+    "Blue Tokai",
+    "Third Wave Coffee",
+    "Starbucks"
+   ],
+   "open": [
+    "Bistro",
+    "Blue Tokai",
+    "Third Wave",
+    "Starbucks"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 6259,
+   "total_tokens": 7857,
+   "completion_tokens": 1598,
+   "prompt_tokens_details": {
+    "cached_tokens": 320
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 1531
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 1531
+   }
+  },
+  "ms": 24696,
+  "apiMs": 48507,
+  "raw": {
+   "brand_mentioned": true,
+   "brand_at_s": 12,
+   "product_on_screen": false,
+   "product_from_s": null,
+   "low_sugar_said": false,
+   "disclosure_present": false,
+   "other_brands": [
+    "Bistro",
+    "Blue Tokai",
+    "Third Wave",
+    "Starbucks"
+   ]
+  }
+ }
+}

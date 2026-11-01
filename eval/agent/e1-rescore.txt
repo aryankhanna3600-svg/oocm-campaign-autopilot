@@ -1,0 +1,32 @@
+2701/2026-10-15 label=[tell_brand,flag_admin] raw=flag_admin gated=flag_admin runs=flag_admin=>flag_admin/show_backups=>show_backups/flag_admin=>flag_admin
+2701/2026-10-16 label=[tell_brand] raw=flag_admin MISS gated=flag_admin MISS runs=flag_admin=>flag_admin/flag_admin=>flag_admin/flag_admin=>flag_admin
+2701/2026-10-17 label=[tell_brand,flag_admin] raw=flag_admin gated=flag_admin runs=flag_admin=>flag_admin/flag_admin=>flag_admin/flag_admin=>flag_admin
+2705/2026-10-16 label=[tell_brand,show_backups] raw=flag_admin MISS gated=flag_admin MISS runs=tell_brand=>tell_brand/flag_admin=>flag_admin/flag_admin=>flag_admin
+2705/2026-10-17 label=[tell_brand] raw=flag_admin MISS gated=flag_admin MISS runs=show_backups=>show_backups/flag_admin=>flag_admin/flag_admin=>flag_admin
+2708/2026-10-16 label=[tell_brand,nudge_creators] raw=flag_admin MISS gated=flag_admin MISS runs=tell_brand=>tell_brand/flag_admin=>flag_admin/flag_admin=>flag_admin
+2708/2026-10-17 label=[nudge_creators,tell_brand] raw=flag_admin MISS gated=flag_admin MISS runs=flag_admin=>flag_admin/tell_brand=>tell_brand/flag_admin=>flag_admin
+2708/2026-10-18 label=[tell_brand,none] raw=flag_admin MISS gated=flag_admin MISS runs=flag_admin=>flag_admin/flag_admin=>flag_admin/flag_admin=>flag_admin
+2700/2026-10-17 label=[show_backups,tell_brand] raw=show_backups gated=show_backups runs=show_backups=>show_backups/show_backups=>show_backups/show_backups=>show_backups
+2700/2026-10-19 label=[tell_brand,show_backups] raw=tell_brand gated=tell_brand runs=show_backups=>show_backups/tell_brand=>tell_brand/tell_brand=>tell_brand
+2700/2026-10-20 label=[tell_brand] raw=flag_admin MISS gated=flag_admin MISS runs=flag_admin=>flag_admin/tell_brand=>tell_brand/flag_admin=>flag_admin
+2827/2026-10-22 label=[tell_brand,show_backups] raw=show_backups gated=show_backups runs=show_backups=>show_backups/show_backups=>show_backups/show_backups=>show_backups
+2827/2026-10-24 label=[flag_admin,tell_brand] raw=tell_brand gated=tell_brand runs=tell_brand=>tell_brand/tell_brand=>tell_brand/tell_brand=>tell_brand
+2827/2026-10-26 label=[tell_brand] raw=tell_brand gated=tell_brand runs=tell_brand=>tell_brand/tell_brand=>tell_brand/tell_brand=>tell_brand
+2827/2026-10-27 label=[tell_brand] raw=tell_brand gated=tell_brand runs=tell_brand=>tell_brand/tell_brand=>tell_brand/tell_brand=>tell_brand
+2828/2026-10-23 label=[tell_brand,flag_admin] raw=show_backups MISS gated=none MISS runs=show_backups=>none/show_backups=>none/show_backups=>none
+2828/2026-10-25 label=[none,flag_admin] raw=tell_brand MISS gated=flag_admin runs=tell_brand=>flag_admin!/tell_brand=>flag_admin!/tell_brand=>flag_admin!
+3123/2026-10-30 label=[tell_brand,none] raw=show_backups MISS gated=show_backups MISS runs=show_backups=>show_backups/show_backups=>show_backups/show_backups=>show_backups
+3123/2026-10-31 label=[tell_brand] raw=tell_brand gated=tell_brand runs=tell_brand=>tell_brand/tell_brand=>tell_brand/tell_brand=>tell_brand
+3138/2026-10-30 label=[show_backups] raw=flag_admin MISS gated=flag_admin MISS runs=flag_admin=>flag_admin/flag_admin=>flag_admin!/flag_admin=>flag_admin
+2700/2026-10-16 label=[none] raw=show_backups MISS gated=show_backups MISS runs=show_backups=>show_backups/show_backups=>show_backups/show_backups=>show_backups
+2700/2026-10-18 label=[none] raw=show_backups MISS gated=show_backups MISS runs=show_backups=>show_backups/show_backups=>show_backups/show_backups=>show_backups
+2827/2026-10-21 label=[none] raw=show_backups MISS gated=show_backups MISS runs=show_backups=>show_backups/show_backups=>show_backups/show_backups=>show_backups
+2828/2026-10-21 label=[none] raw=tell_brand MISS gated=tell_brand MISS runs=tell_brand=>tell_brand/show_backups=>show_backups/tell_brand=>tell_brand
+2800/2026-10-20 label=[none] raw=show_backups MISS gated=show_backups MISS runs=show_backups=>show_backups/show_backups=>show_backups/show_backups=>show_backups
+2800/2026-10-22 label=[none,tell_brand] raw=show_backups MISS gated=show_backups MISS runs=show_backups=>show_backups/show_backups=>show_backups/show_backups=>show_backups
+2800/2026-10-24 label=[tell_brand,none] raw=show_backups MISS gated=show_backups MISS runs=show_backups=>show_backups/show_backups=>show_backups/show_backups=>show_backups
+2800/2026-10-26 label=[tell_brand,none] raw=flag_admin MISS gated=flag_admin MISS runs=flag_admin=>flag_admin/tell_brand=>tell_brand/flag_admin=>flag_admin
+2828/2026-10-29 label=[none,flag_admin] raw=tell_brand MISS gated=flag_admin runs=tell_brand=>flag_admin!/flag_admin=>flag_admin/show_backups=>flag_admin!
+3138/2026-10-29 label=[tell_brand,flag_admin] raw=flag_admin gated=flag_admin runs=flag_admin=>flag_admin/flag_admin=>flag_admin/flag_admin=>flag_admin
+
+scored=30 raw_match=10 gated_match=12

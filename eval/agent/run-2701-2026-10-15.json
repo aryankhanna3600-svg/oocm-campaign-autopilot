@@ -1,0 +1,166 @@
+{
+  "campaign_id": 2701,
+  "campaign_name": "Sufi Night at Sorry Sugar M3M 65th Avenue · Fri 16 Oct",
+  "day": "2026-10-15",
+  "phase": "open",
+  "facts_hash": "bb66b713116e618a",
+  "facts": [
+    {
+      "id": "phase",
+      "detail": "Sufi Night at Sorry Sugar M3M 65th Avenue · Fri 16 Oct is open."
+    },
+    {
+      "id": "applicants",
+      "detail": "Nobody has applied yet (5 creators wanted)."
+    },
+    {
+      "id": "fit",
+      "detail": "No fit scores yet."
+    },
+    {
+      "id": "safety",
+      "detail": "No safety flags on live applicants."
+    },
+    {
+      "id": "drafts_waiting",
+      "detail": "No drafts waiting on the brand."
+    },
+    {
+      "id": "pieces_past_due",
+      "detail": "Nothing past its date."
+    },
+    {
+      "id": "silent_creators",
+      "detail": "Every active creator has sent something or is still in time."
+    },
+    {
+      "id": "brand_activity",
+      "detail": "No brand-attributed action on this campaign up to this day (reconstructed; app last-seen is not time-travelable and is omitted)."
+    },
+    {
+      "id": "apply_by",
+      "detail": "Creators can apply until 2026-10-16."
+    },
+    {
+      "id": "budget",
+      "detail": "No budget stated on the campaign."
+    },
+    {
+      "id": "agent_history",
+      "detail": "The agent did not exist yet; no agent history."
+    }
+  ],
+  "applicants": {},
+  "wanted": 5,
+  "apply_days_left": 1,
+  "waiting_drafts": 0,
+  "pieces_past_due": 0,
+  "silent_pieces": 0,
+  "overdue": false,
+  "runs": [
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 797,
+        "input_tokens_details": {
+          "cached_tokens": 497
+        },
+        "output_tokens": 522,
+        "output_tokens_details": {
+          "reasoning_tokens": 421
+        },
+        "total_tokens": 1319
+      },
+      "cost_usd": 0.00321475,
+      "latency_ms": 8085,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "flag_admin",
+        "admin_note": "0 applicants for 5 wanted, apply-by 2026-10-16, event Fri 16 Oct is tomorrow - funnel empty with no time to recruit normally, needs human intervention.",
+        "confidence": 0.9,
+        "diagnosis": "No creators have applied for 5 slots with the event tomorrow.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "phase"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": null
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 797,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 309,
+        "output_tokens_details": {
+          "reasoning_tokens": 207
+        },
+        "total_tokens": 1106
+      },
+      "cost_usd": 0.0023095,
+      "latency_ms": 3702,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "show_backups",
+        "admin_note": "0 applicants for 5 wanted, event is 16 Oct, apply window open until 2026-10-16 - need alternates/invites now.",
+        "confidence": 0.9,
+        "diagnosis": "No creators have applied for the 5 wanted spots with 1 day left to apply.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "phase"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "show_backups:<live backup count> more creators fit this brief — worth a look before you decide."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 797,
+        "input_tokens_details": {
+          "cached_tokens": 753
+        },
+        "output_tokens": 569,
+        "output_tokens_details": {
+          "reasoning_tokens": 462
+        },
+        "total_tokens": 1366
+      },
+      "cost_usd": 0.0034145,
+      "latency_ms": 2771,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "flag_admin",
+        "admin_note": "0 applicants for 5 wanted slots, event is Fri 16 Oct (tomorrow from 15 Oct) with apply-by 16 Oct - too late to run normal backup invites, needs human call.",
+        "confidence": 0.9,
+        "diagnosis": "No creators have applied for 5 slots with the event 1 day away.",
+        "fact_ids": [
+          "applicants",
+          "phase",
+          "apply_by"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": null
+    }
+  ],
+  "assumptions": [],
+  "leakage": [
+    "prod snapshot is read at replay time; rows deleted since (if any) are invisible",
+    "brand tier/override/lock state is current, not as-of-day"
+  ]
+}

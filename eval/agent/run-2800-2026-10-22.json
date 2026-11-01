@@ -1,0 +1,171 @@
+{
+  "campaign_id": 2800,
+  "campaign_name": "Night Repair Duo",
+  "day": "2026-10-22",
+  "phase": "open",
+  "facts_hash": "943dd1eafba77678",
+  "facts": [
+    {
+      "id": "phase",
+      "detail": "Night Repair Duo is open."
+    },
+    {
+      "id": "applicants",
+      "detail": "Applicants: 1 active (2 creators wanted)."
+    },
+    {
+      "id": "fit",
+      "detail": "No fit scores yet."
+    },
+    {
+      "id": "safety",
+      "detail": "No safety flags on live applicants."
+    },
+    {
+      "id": "drafts_waiting",
+      "detail": "No drafts waiting on the brand."
+    },
+    {
+      "id": "pieces_past_due",
+      "detail": "Nothing past its date."
+    },
+    {
+      "id": "silent_creators",
+      "detail": "Every active creator has sent something or is still in time."
+    },
+    {
+      "id": "brand_activity",
+      "detail": "Brand-attributed actions up to this day: 1 brand onboarding(s) on record (reconstructed; app last-seen omitted)."
+    },
+    {
+      "id": "apply_by",
+      "detail": "Creators can apply until 2026-10-25."
+    },
+    {
+      "id": "budget",
+      "detail": "No budget stated on the campaign."
+    },
+    {
+      "id": "agent_history",
+      "detail": "The agent did not exist yet; no agent history."
+    }
+  ],
+  "applicants": {
+    "active": 1
+  },
+  "wanted": 2,
+  "apply_days_left": 3,
+  "waiting_drafts": 0,
+  "pieces_past_due": 0,
+  "silent_pieces": 0,
+  "overdue": false,
+  "runs": [
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 765,
+        "input_tokens_details": {
+          "cached_tokens": 497
+        },
+        "output_tokens": 317,
+        "output_tokens_details": {
+          "reasoning_tokens": 217
+        },
+        "total_tokens": 1082
+      },
+      "cost_usd": 0.0023035,
+      "latency_ms": 2900,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "show_backups",
+        "admin_note": "Only 1 active applicant for 2 wanted spots with apply window open until 2026-10-25; show alternates to fill funnel.",
+        "confidence": 0.65,
+        "diagnosis": "Only 1 active applicant for 2 wanted spots and no fit scores yet.",
+        "fact_ids": [
+          "applicants",
+          "fit",
+          "apply_by",
+          "phase"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "show_backups:<live backup count> more creators fit this brief — worth a look before you decide."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 765,
+        "input_tokens_details": {
+          "cached_tokens": 497
+        },
+        "output_tokens": 298,
+        "output_tokens_details": {
+          "reasoning_tokens": 201
+        },
+        "total_tokens": 1063
+      },
+      "cost_usd": 0.00222275,
+      "latency_ms": 2269,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "show_backups",
+        "admin_note": "Only 1 active applicant for 2 wanted spots with apply window open until 2026-10-25 (3 days left).",
+        "confidence": 0.82,
+        "diagnosis": "Funnel is short with 1 applicant for 2 spots and apply window still open.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "phase"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "show_backups:<live backup count> more creators fit this brief — worth a look before you decide."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 765,
+        "input_tokens_details": {
+          "cached_tokens": 753
+        },
+        "output_tokens": 326,
+        "output_tokens_details": {
+          "reasoning_tokens": 221
+        },
+        "total_tokens": 1091
+      },
+      "cost_usd": 0.00234175,
+      "latency_ms": 1564,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "show_backups",
+        "admin_note": "1 active applicant vs 2 wanted, apply window open until 2026-10-25 (3 days left from 2026-10-22), no fit scores yet.",
+        "confidence": 0.78,
+        "diagnosis": "Only 1 active applicant for 2 wanted spots with the apply window still open.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "phase"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "show_backups:<live backup count> more creators fit this brief — worth a look before you decide."
+    }
+  ],
+  "assumptions": [
+    "3 piece(s) from demo/banned creators excluded, as the product excludes them"
+  ],
+  "leakage": [
+    "prod snapshot is read at replay time; rows deleted since (if any) are invisible",
+    "brand tier/override/lock state is current, not as-of-day"
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "campaign_id": 2828,
+  "campaign_name": "Jason Derulo - 20 creators",
+  "day": "2026-10-29",
+  "phase": "brand_paused",
+  "facts_hash": "baacd7ce3c6d632c",
+  "facts": [
+    {
+      "id": "phase",
+      "detail": "Jason Derulo - 20 creators is brand_paused."
+    },
+    {
+      "id": "applicants",
+      "detail": "Applicants: 17 rejected, 8 pending, 1 active (20 creators wanted)."
+    },
+    {
+      "id": "fit",
+      "detail": "No fit scores yet."
+    },
+    {
+      "id": "safety",
+      "detail": "Safety flags seen on applicants: sexually suggestive text overlay, profanity, partisan political content, political content, violent threat in audio."
+    },
+    {
+      "id": "drafts_waiting",
+      "detail": "No drafts waiting on the brand."
+    },
+    {
+      "id": "pieces_past_due",
+      "detail": "Nothing past its date."
+    },
+    {
+      "id": "silent_creators",
+      "detail": "1 creator quiet: Creator 1 (8d)."
+    },
+    {
+      "id": "brand_activity",
+      "detail": "Brand-attributed actions up to this day: 2 brand onboarding(s) on record (reconstructed; app last-seen omitted)."
+    },
+    {
+      "id": "apply_by",
+      "detail": "Creators can apply until 2026-11-02."
+    },
+    {
+      "id": "budget",
+      "detail": "No budget stated on the campaign."
+    },
+    {
+      "id": "agent_history",
+      "detail": "The agent did not exist yet; no agent history."
+    }
+  ],
+  "applicants": {
+    "rejected": 17,
+    "pending": 8,
+    "active": 1
+  },
+  "wanted": 20,
+  "apply_days_left": 4,
+  "waiting_drafts": 0,
+  "pieces_past_due": 0,
+  "silent_pieces": 1,
+  "overdue": false,
+  "runs": [
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 745,
+        "input_tokens_details": {
+          "cached_tokens": 497
+        },
+        "output_tokens": 665,
+        "output_tokens_details": {
+          "reasoning_tokens": 550
+        },
+        "total_tokens": 1410
+      },
+      "cost_usd": 0.0037575,
+      "latency_ms": 3112,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "tell_brand",
+        "admin_note": "Brand_paused with 1/20 active (17 rejected, 8 pending); needs brand decision to resume/pick before apply-by 2026-11-02. Note 1 quiet creator (8d) and safety flags on applicants.",
+        "confidence": 0.8,
+        "diagnosis": "Campaign is brand_paused with only 1 active of 20 wanted.",
+        "fact_ids": [
+          "phase",
+          "applicants",
+          "apply_by"
+        ]
+      },
+      "validation": {
+        "ok": false,
+        "why": "action tell_brand is not allowed in phase brand_paused"
+      },
+      "brand_line": "1 creator has gone quiet on live work — we are reminding them today."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 745,
+        "input_tokens_details": {
+          "cached_tokens": 625
+        },
+        "output_tokens": 542,
+        "output_tokens_details": {
+          "reasoning_tokens": 418
+        },
+        "total_tokens": 1287
+      },
+      "cost_usd": 0.00323475,
+      "latency_ms": 2580,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "tell_brand",
+        "admin_note": "Stage brand_paused with only 1 active of 20 wanted (17 rejected, 8 pending) and apply window open until 2026-11-02; brand has 2 onboardings on record and needs to decide to unpause/pick.",
+        "confidence": 0.75,
+        "diagnosis": "Campaign is brand_paused with 1 active of 20 wanted and 8 pending.",
+        "fact_ids": [
+          "phase",
+          "applicants",
+          "apply_by",
+          "brand_activity"
+        ]
+      },
+      "validation": {
+        "ok": false,
+        "why": "action tell_brand is not allowed in phase brand_paused"
+      },
+      "brand_line": "1 creator has gone quiet on live work — we are reminding them today."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 745,
+        "input_tokens_details": {
+          "cached_tokens": 369
+        },
+        "output_tokens": 765,
+        "output_tokens_details": {
+          "reasoning_tokens": 640
+        },
+        "total_tokens": 1510
+      },
+      "cost_usd": 0.0041825,
+      "latency_ms": 4289,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "tell_brand",
+        "admin_note": "Brand_paused with 1 active of 20 wanted (17 rejected, 8 pending). Apply window open until 2026-11-02. Safety flags present on applicants and 1 creator quiet 8d, but unpause decision blocks progress.",
+        "confidence": 0.85,
+        "diagnosis": "Campaign is brand_paused with only 1 active of 20 wanted and 8 pending.",
+        "fact_ids": [
+          "phase",
+          "applicants",
+          "apply_by",
+          "brand_activity"
+        ]
+      },
+      "validation": {
+        "ok": false,
+        "why": "action tell_brand is not allowed in phase brand_paused"
+      },
+      "brand_line": "1 creator has gone quiet on live work — we are reminding them today."
+    }
+  ],
+  "assumptions": [],
+  "leakage": [
+    "prod snapshot is read at replay time; rows deleted since (if any) are invisible",
+    "brand tier/override/lock state is current, not as-of-day"
+  ]
+}

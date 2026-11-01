@@ -1,0 +1,194 @@
+{
+  "campaign_id": 2827,
+  "campaign_name": "Three Days. One ODYSSEY.",
+  "day": "2026-10-27",
+  "phase": "closed_to_apply",
+  "facts_hash": "163c4f1f456254eb",
+  "facts": [
+    {
+      "id": "phase",
+      "detail": "Three Days. One ODYSSEY. is closed_to_apply."
+    },
+    {
+      "id": "applicants",
+      "detail": "Applicants: 25 pending, 6 rejected (125 creators wanted)."
+    },
+    {
+      "id": "fit",
+      "detail": "No fit scores yet."
+    },
+    {
+      "id": "safety",
+      "detail": "No safety flags on live applicants."
+    },
+    {
+      "id": "drafts_waiting",
+      "detail": "No drafts waiting on the brand."
+    },
+    {
+      "id": "pieces_past_due",
+      "detail": "Nothing past its date."
+    },
+    {
+      "id": "silent_creators",
+      "detail": "Every active creator has sent something or is still in time."
+    },
+    {
+      "id": "brand_activity",
+      "detail": "No brand-attributed action on this campaign up to this day (reconstructed; app last-seen is not time-travelable and is omitted)."
+    },
+    {
+      "id": "apply_by",
+      "detail": "Creators can apply until 2026-10-24."
+    },
+    {
+      "id": "budget",
+      "detail": "No budget stated on the campaign."
+    },
+    {
+      "id": "agent_history",
+      "detail": "The agent did not exist yet; no agent history."
+    }
+  ],
+  "applicants": {
+    "pending": 25,
+    "rejected": 6
+  },
+  "wanted": 125,
+  "apply_days_left": -3,
+  "waiting_drafts": 0,
+  "pieces_past_due": 0,
+  "silent_pieces": 0,
+  "overdue": false,
+  "runs": [
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 788,
+        "input_tokens_details": {
+          "cached_tokens": 497
+        },
+        "output_tokens": 488,
+        "output_tokens_details": {
+          "reasoning_tokens": 378
+        },
+        "total_tokens": 1276
+      },
+      "cost_usd": 0.003059,
+      "latency_ms": 2354,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "tell_brand",
+        "admin_note": "25 pending vs 125 wanted, 6 rejected, apply window closed 2026-10-24, stage closed_to_apply, no brand action to date - brand must review/pick.",
+        "confidence": 0.7,
+        "diagnosis": "25 applicants pending for 125 wanted spots with window closed and no brand picks yet.",
+        "fact_ids": [
+          "applicants",
+          "phase",
+          "apply_by",
+          "brand_activity"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "Only 31 applied for the 125 spots."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 788,
+        "input_tokens_details": {
+          "cached_tokens": 753
+        },
+        "output_tokens": 329,
+        "output_tokens_details": {
+          "reasoning_tokens": 231
+        },
+        "total_tokens": 1117
+      },
+      "cost_usd": 0.00238325,
+      "latency_ms": 4308,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "tell_brand",
+        "admin_note": "25 pending vs 125 wanted, apply window closed 2026-10-24, no brand action to pick yet.",
+        "confidence": 0.85,
+        "diagnosis": "25 applicants are pending for 125 spots with no brand picks and the apply window now closed.",
+        "fact_ids": [
+          "applicants",
+          "phase",
+          "brand_activity",
+          "apply_by"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "Only 31 applied for the 125 spots."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 788,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 507,
+        "output_tokens_details": {
+          "reasoning_tokens": 401
+        },
+        "total_tokens": 1295
+      },
+      "cost_usd": 0.00313975,
+      "latency_ms": 2987,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "tell_brand",
+        "admin_note": "Stage closed_to_apply, apply window closed 2026-10-24, 25 pending of 125 wanted with zero brand actions to date; brand must review/pick.",
+        "confidence": 0.85,
+        "diagnosis": "25 applicants are pending with no brand picks and the apply window is now closed.",
+        "fact_ids": [
+          "phase",
+          "applicants",
+          "brand_activity",
+          "apply_by"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "Only 31 applied for the 125 spots."
+    }
+  ],
+  "assumptions": [],
+  "leakage": [
+    "prod snapshot is read at replay time; rows deleted since (if any) are invisible",
+    "brand tier/override/lock state is current, not as-of-day",
+    "creator 1475 fit profile scored 2026-10-28, after the day",
+    "creator 1649 fit profile scored 2026-10-28, after the day",
+    "creator 1402 fit profile scored 2026-10-28, after the day",
+    "creator 1147 fit profile scored 2026-10-28, after the day",
+    "creator 1877 fit profile scored 2026-10-28, after the day",
+    "creator 1296 fit profile scored 2026-10-28, after the day",
+    "creator 1515 fit profile scored 2026-10-28, after the day",
+    "creator 1677 fit profile scored 2026-10-28, after the day",
+    "creator 1683 fit profile scored 2026-10-28, after the day",
+    "creator 1686 fit profile scored 2026-10-28, after the day",
+    "creator 1253 fit profile scored 2026-10-28, after the day",
+    "creator 1772 fit profile scored 2026-10-28, after the day",
+    "creator 1588 fit profile scored 2026-10-28, after the day",
+    "creator 1819 fit profile scored 2026-10-28, after the day",
+    "creator 1826 fit profile scored 2026-10-28, after the day",
+    "creator 1622 fit profile scored 2026-10-28, after the day",
+    "creator 1492 fit profile scored 2026-10-28, after the day",
+    "creator 1880 fit profile scored 2026-10-28, after the day",
+    "creator 1886 fit profile scored 2026-10-28, after the day",
+    "creator 1722 fit profile scored 2026-10-28, after the day",
+    "creator 1923 fit profile scored 2026-10-28, after the day",
+    "creator 1813 fit profile scored 2026-10-28, after the day"
+  ]
+}

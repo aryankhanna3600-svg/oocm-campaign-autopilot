@@ -1,0 +1,860 @@
+{
+ "creator-1": {
+  "profile": {
+   "reels": 1,
+   "niches": [
+    {
+     "tag": "coffee reviews",
+     "reels": 1
+    },
+    {
+     "tag": "low sugar",
+     "reels": 1
+    },
+    {
+     "tag": "health",
+     "reels": 1
+    }
+   ],
+   "formats": [
+    {
+     "format": "comparison",
+     "reels": 1
+    }
+   ],
+   "languages": [
+    "english"
+   ],
+   "face_on_camera": 1,
+   "talks_to_camera": 1,
+   "hook_strength": 4,
+   "production_quality": 3,
+   "energy": 3,
+   "brands_worked_with": [
+    "bistro by blinkit",
+    "blue tokai",
+    "sorry sugar",
+    "third wave coffee",
+    "sleepy owl coffee"
+   ],
+   "safety_flags": [],
+   "audience": [
+    "health-conscious young indians into coffee"
+   ],
+   "summaries": [
+    "Woman rates five coffee brands by sugar content with on-screen logos and scores."
+   ]
+  },
+  "reels": [
+   {
+    "audience": "health-conscious young Indians into coffee",
+    "brands_shown": [
+     "Bistro by Blinkit",
+     "Blue Tokai",
+     "Sorry Sugar",
+     "Third Wave Coffee",
+     "Sleepy Owl Coffee"
+    ],
+    "energy": 3,
+    "face_on_camera": true,
+    "format": "comparison",
+    "hook": "On-screen title promises rating coffees by sugar content.",
+    "hook_strength": 4,
+    "language": "English",
+    "niche": [
+     "coffee reviews",
+     "low sugar",
+     "health"
+    ],
+    "product_integration": "comparison",
+    "production_quality": 3,
+    "safety_flags": [],
+    "setting": "home interior",
+    "summary": "Woman rates five coffee brands by sugar content with on-screen logos and scores.",
+    "talks_to_camera": true
+   }
+  ],
+  "fits": {
+   "Sorry Sugar": {
+    "pitch": "She rates five Delhi NCR coffees head-to-head on sugar with on-screen scores and crowns Sorry Sugar as the low-sugar pick.",
+    "reasons": [
+     "Perfect niche fit with reels in coffee reviews, low sugar, and health",
+     "Already makes the exact comparison format ranking five coffee brands by sugar content with logos and scores",
+     "Talks to camera on-screen for a health-conscious young Indian coffee audience matching the brief"
+    ],
+    "risks": [
+     "Has featured direct competitors Blue Tokai, Third Wave Coffee, Sleepy Owl Coffee and Bistro by Blinkit",
+     "Has already featured Sorry Sugar which risks repeat-content fatigue",
+     "Only one reel observed so consistency is unproven"
+    ],
+    "score": 90,
+    "verdict": "strong"
+   },
+   "Harissons": {
+    "pitch": "She would rank her low-sugar coffee and 3-day essentials while packing them into the ODYSSEY 40L on camera.",
+    "reasons": [
+     "Talks to camera in English with hook_strength 4, fitting the on-camera demo and feature callouts.",
+     "Uses a comparison format with on-screen scores, which could be repurposed to showcase the anti-theft pocket and USB port.",
+     "Reaches health-conscious young Indians, a slight overlap with young professionals."
+    ],
+    "risks": [
+     "Niche mismatch: all work is coffee reviews / low sugar / health with no travel or packing reels for a travellers brief.",
+     "No proof of packing real travel gear in one unbroken shot from only 1 reel of rating five coffees.",
+     "Habit of showing on-screen logos for five brands conflicts with Don'ts to show no other bag brand."
+    ],
+    "score": 30,
+    "verdict": "poor"
+   }
+  }
+ },
+ "creator-2": {
+  "profile": {
+   "reels": 1,
+   "niches": [
+    {
+     "tag": "coffee reviews",
+     "reels": 1
+    },
+    {
+     "tag": "low sugar",
+     "reels": 1
+    },
+    {
+     "tag": "cafe culture",
+     "reels": 1
+    }
+   ],
+   "formats": [
+    {
+     "format": "comparison",
+     "reels": 1
+    }
+   ],
+   "languages": [
+    "english"
+   ],
+   "face_on_camera": 1,
+   "talks_to_camera": 1,
+   "hook_strength": 3,
+   "production_quality": 3,
+   "energy": 3,
+   "brands_worked_with": [
+    "bistro by blinkit",
+    "blue tokai",
+    "sorry sugar",
+    "third wave coffee",
+    "starbucks"
+   ],
+   "safety_flags": [],
+   "audience": [
+    "health-conscious young coffee drinkers in india"
+   ],
+   "summaries": [
+    "A woman rates five coffee brands by sugar content with on-screen scores."
+   ]
+  },
+  "reels": [
+   {
+    "audience": "health-conscious young coffee drinkers in India",
+    "brands_shown": [
+     "bistro BY BLINKIT",
+     "BLUE TOKAI",
+     "SORRY SUGAR",
+     "THIRD WAVE COFFEE",
+     "Starbucks"
+    ],
+    "energy": 3,
+    "face_on_camera": true,
+    "format": "comparison",
+    "hook": "On-screen text promises rating coffees by sugar content.",
+    "hook_strength": 3,
+    "language": "English",
+    "niche": [
+     "coffee reviews",
+     "low sugar",
+     "cafe culture"
+    ],
+    "product_integration": "comparison",
+    "production_quality": 3,
+    "safety_flags": [],
+    "setting": "home dining table",
+    "summary": "A woman rates five coffee brands by sugar content with on-screen scores.",
+    "talks_to_camera": true
+   }
+  ],
+  "fits": {
+   "Sorry Sugar": {
+    "pitch": "She ranks five popular coffees by sugar on camera with on-screen scores and picks Sorry Sugar as the low-sugar winner.",
+    "reasons": [
+     "Made a comparison reel rating five coffee brands by sugar content with on-screen scores, exactly the brief format",
+     "Niches are coffee reviews, low sugar, and cafe culture with face-on English talk-to-camera",
+     "Audience is health-conscious young coffee drinkers in India, matching young urban coffee drinkers"
+    ],
+    "risks": [
+     "Has worked with direct competitors Blue Tokai, Third Wave Coffee and Starbucks alongside Sorry Sugar",
+     "Only one reel observed so consistency and range are unproven",
+     "Hook strength 3 and production quality 3 are mid-level for a competitive feed"
+    ],
+    "score": 85,
+    "verdict": "strong"
+   },
+   "Harissons": {
+    "pitch": "She packs three days of work-from-cafe essentials into the ODYSSEY 40L in one take while rating which low-sugar coffees make the trip with her.",
+    "reasons": [
+     "Talks-to-camera, face-on-camera style seen in her coffee-rating reel fits the brief's on-camera packing and feature demo",
+     "Comparison format with on-screen scores seen in the five-brand sugar test could translate to showing the anti-theft pocket and USB port",
+     "Audience of young coffee drinkers in India partially overlaps with young professionals in age and cafe-work lifestyle"
+    ],
+    "risks": [
+     "Niche mismatch: only reel is coffee reviews / cafe culture with no travel or packing content for a travellers backpack brief",
+     "No evidence of travel, one-bag packing, or unbroken-shot demo ability in the single reel observed",
+     "Hook strength 3/5 suggests weak opening hooks for a pack-with-me Reel that needs to hold travellers"
+    ],
+    "score": 32,
+    "verdict": "poor"
+   }
+  }
+ },
+ "creator-3": {
+  "profile": {
+   "reels": 1,
+   "niches": [
+    {
+     "tag": "coffee reviews",
+     "reels": 1
+    },
+    {
+     "tag": "cafe health tips",
+     "reels": 1
+    },
+    {
+     "tag": "low sugar",
+     "reels": 1
+    }
+   ],
+   "formats": [
+    {
+     "format": "comparison",
+     "reels": 1
+    }
+   ],
+   "languages": [
+    "english"
+   ],
+   "face_on_camera": 1,
+   "talks_to_camera": 1,
+   "hook_strength": 4,
+   "production_quality": 3,
+   "energy": 2,
+   "brands_worked_with": [
+    "bistro by blinkit",
+    "blue tokai",
+    "sorry sugar",
+    "third wave coffee",
+    "starbucks"
+   ],
+   "safety_flags": [],
+   "audience": [
+    "health-conscious young coffee drinkers in india"
+   ],
+   "summaries": [
+    "Woman standing outdoors at night rates five coffee brands by sugar content with on-screen scores."
+   ]
+  },
+  "reels": [
+   {
+    "audience": "health-conscious young coffee drinkers in India",
+    "brands_shown": [
+     "Bistro by Blinkit",
+     "Blue Tokai",
+     "Sorry Sugar",
+     "Third Wave Coffee",
+     "Starbucks"
+    ],
+    "energy": 2,
+    "face_on_camera": true,
+    "format": "comparison",
+    "hook": "On-screen text promises to rate coffees by sugar content.",
+    "hook_strength": 4,
+    "language": "English",
+    "niche": [
+     "coffee reviews",
+     "cafe health tips",
+     "low sugar"
+    ],
+    "product_integration": "comparison",
+    "production_quality": 3,
+    "safety_flags": [],
+    "setting": "city plaza night",
+    "summary": "Woman standing outdoors at night rates five coffee brands by sugar content with on-screen scores.",
+    "talks_to_camera": true
+   }
+  ],
+  "fits": {
+   "Sorry Sugar": {
+    "pitch": "Standing outdoors at night, she rates five Delhi NCR coffees by sugar content with on-screen scores and picks Sorry Sugar as the lowest-sugar winner.",
+    "reasons": [
+     "Made a comparison reel rating five coffee brands by sugar content with on-screen scores, exactly the brief's format",
+     "Niches are coffee reviews, low sugar, and cafe health tips for health-conscious young coffee drinkers in India",
+     "Face on-camera and talks to camera with hook strength 4, suited to young urban coffee drinkers"
+    ],
+    "risks": [
+     "Has featured competitors Blue Tokai, Third Wave Coffee, and Starbucks, which risks diluted loyalty",
+     "Only one reel observed, so limited proof of consistency",
+     "Production quality 3 and energy 2 could feel flat for a hero pick reel"
+    ],
+    "score": 88,
+    "verdict": "strong"
+   },
+   "Harissons": {
+    "pitch": "She packs three days of work-plus-cafe essentials into the ODYSSEY in one take while scoring the fit with her signature on-screen ratings and spotlighting the anti-theft pocket and USB port.",
+    "reasons": [
+     "Talks to camera face-on-camera in English, matching the young professional audience communication style",
+     "Uses a comparison format with on-screen scores seen in the five-coffee sugar rating reel that could transfer to showing backpack features",
+     "Existing audience of health-conscious young coffee drinkers in India partially overlaps young professionals who cafe-work and commute"
+    ],
+    "risks": [
+     "Niche mismatch: only reel is coffee reviews / low-sugar cafe tips with no travel, packing, or backpack content seen",
+     "No evidence of dynamic product-demo skills like packing in one unbroken shot or showing hidden pocket and USB port on camera",
+     "Low energy 2/5 static outdoor night talking format may not carry a Three Days One ODYSSEY travel story for travellers"
+    ],
+    "score": 35,
+    "verdict": "poor"
+   }
+  }
+ },
+ "creator-6": {
+  "profile": {
+   "reels": 1,
+   "niches": [
+    {
+     "tag": "coffee reviews",
+     "reels": 1
+    },
+    {
+     "tag": "cafe culture",
+     "reels": 1
+    },
+    {
+     "tag": "low-sugar living",
+     "reels": 1
+    }
+   ],
+   "formats": [
+    {
+     "format": "comparison",
+     "reels": 1
+    }
+   ],
+   "languages": [
+    "english"
+   ],
+   "face_on_camera": 1,
+   "talks_to_camera": 1,
+   "hook_strength": 3,
+   "production_quality": 3,
+   "energy": 4,
+   "brands_worked_with": [
+    "bistro",
+    "blue tokai",
+    "sorry sugar",
+    "third wave coffee",
+    "sleepy owl"
+   ],
+   "safety_flags": [],
+   "audience": [
+    "young indian coffee drinkers"
+   ],
+   "summaries": [
+    "A young woman rates five coffee brands by sugar content with scores on screen."
+   ]
+  },
+  "reels": [
+   {
+    "audience": "young Indian coffee drinkers",
+    "brands_shown": [
+     "Bistro",
+     "Blue Tokai",
+     "Sorry Sugar",
+     "Third Wave Coffee",
+     "Sleepy Owl"
+    ],
+    "energy": 4,
+    "face_on_camera": true,
+    "format": "comparison",
+    "hook": "Flips hair as on-screen text introduces coffee sugar ratings.",
+    "hook_strength": 3,
+    "language": "English",
+    "niche": [
+     "coffee reviews",
+     "cafe culture",
+     "low-sugar living"
+    ],
+    "product_integration": "comparison",
+    "production_quality": 3,
+    "safety_flags": [],
+    "setting": "indoor hallway",
+    "summary": "A young woman rates five coffee brands by sugar content with scores on screen.",
+    "talks_to_camera": true
+   }
+  ],
+  "fits": {
+   "Sorry Sugar": {
+    "pitch": "She rates five coffees by sugar content on camera with on-screen scores and picks Sorry Sugar as the low-sugar winner.",
+    "reasons": [
+     "Made a comparison reel rating five coffee brands by sugar content with scores on screen, exactly the brief format.",
+     "Niches are coffee reviews, cafe culture, and low-sugar living for young indian coffee drinkers.",
+     "Face-on-camera, talks-to-camera in english with energy 4, suited to young urban coffee drinkers."
+    ],
+    "risks": [
+     "Worked with competitors Blue Tokai, Third Wave Coffee, and Sleepy Owl which could dilute the Sorry Sugar pick.",
+     "Only one reel observed, so limited proof of consistency.",
+     "Hook_strength 3 and production_quality 3 are average and may need a stronger hook for cut-through."
+    ],
+    "score": 90,
+    "verdict": "strong"
+   },
+   "Harissons": {
+    "pitch": "She packs three days of work-plus-cafe essentials into the ODYSSEY 40L in one unbroken take while rating what fits best on screen.",
+    "reasons": [
+     "Talks to camera with face on camera and energy 4, fitting the on-camera packing demo.",
+     "Uses a comparison format with on-screen scores that could translate to showing pockets and features.",
+     "Reaches young Indian coffee drinkers in English with overlap to young professionals."
+    ],
+    "risks": [
+     "Niche mismatch: coffee reviews and cafe culture with no travel or packing content for a 3-day trip brief.",
+     "No evidence of traveller audience or travel credibility for a traveller-focused backpack.",
+     "Hook strength 3 and production quality 3 may under-deliver the unbroken packing shot and feature demos."
+    ],
+    "score": 32,
+    "verdict": "poor"
+   }
+  }
+ },
+ "creator-5": {
+  "profile": {
+   "reels": 1,
+   "niches": [
+    {
+     "tag": "coffee reviews",
+     "reels": 1
+    },
+    {
+     "tag": "cafe culture",
+     "reels": 1
+    },
+    {
+     "tag": "low sugar",
+     "reels": 1
+    }
+   ],
+   "formats": [
+    {
+     "format": "comparison",
+     "reels": 1
+    }
+   ],
+   "languages": [
+    "none (music only)"
+   ],
+   "face_on_camera": 1,
+   "talks_to_camera": 0,
+   "hook_strength": 4,
+   "production_quality": 3,
+   "energy": 2,
+   "brands_worked_with": [
+    "bistro by blinkit",
+    "blue tokai",
+    "sorry sugar",
+    "sleepy owl"
+   ],
+   "safety_flags": [],
+   "audience": [
+    "young indian coffee lovers"
+   ],
+   "summaries": [
+    "Woman rates four iced coffee brands by sugar content using finger counts."
+   ]
+  },
+  "reels": [
+   {
+    "audience": "young Indian coffee lovers",
+    "brands_shown": [
+     "Bistro by Blinkit",
+     "Blue Tokai",
+     "Sorry Sugar",
+     "Sleepy Owl"
+    ],
+    "energy": 2,
+    "face_on_camera": true,
+    "format": "comparison",
+    "hook": "Woman poses with iced latte under bold rating text",
+    "hook_strength": 4,
+    "language": "none (music only)",
+    "niche": [
+     "coffee reviews",
+     "cafe culture",
+     "low sugar"
+    ],
+    "product_integration": "comparison",
+    "production_quality": 3,
+    "safety_flags": [],
+    "setting": "home bedroom",
+    "summary": "Woman rates four iced coffee brands by sugar content using finger counts.",
+    "talks_to_camera": false
+   }
+  ],
+  "fits": {
+   "Sorry Sugar": {
+    "pitch": "Rates four iced coffees by sugar content using finger counts with Sorry Sugar as the lowest-sugar pick.",
+    "reasons": [
+     "Made a comparison reel rating four iced coffee brands by sugar content using finger counts, exactly the brief's format",
+     "Niches are coffee reviews, cafe culture and low sugar for young Indian coffee lovers, matching the campaign audience",
+     "On-camera with hook strength 4 in a coffee-review format suited to young urban coffee drinkers"
+    ],
+    "risks": [
+     "Has also featured Blue Tokai and Sleepy Owl, competing coffee brands",
+     "Music-only with no talking to camera and energy 2 may limit verbal persuasion for Sorry Sugar as the pick",
+     "Only one reel reviewed, so consistency is unproven"
+    ],
+    "score": 86,
+    "verdict": "strong"
+   },
+   "Harissons": {
+    "pitch": "She would pack three days of cafe-work essentials into the ODYSSEY in one take, using her finger-count comparison style to rank what fits best.",
+    "reasons": [
+     "Only reel is a coffee reviews comparison rating four iced coffees by sugar content, with no travel or packing content",
+     "Music-only reel with face on camera but no talking to camera",
+     "Audience is young indian coffee lovers, not travellers and young professionals"
+    ],
+    "risks": [
+     "Niche mismatch: cafe culture and low sugar content does not signal travel credibility",
+     "Music-only, non-verbal style may fail to clearly demo the hidden anti-theft pocket and USB port on camera",
+     "Low energy score of 2 and single-format history gives little proof she can carry a three-day pack in one unbroken shot"
+    ],
+    "score": 32,
+    "verdict": "poor"
+   }
+  }
+ },
+ "creator-4": {
+  "profile": {
+   "reels": 1,
+   "niches": [
+    {
+     "tag": "coffee reviews",
+     "reels": 1
+    },
+    {
+     "tag": "nutrition",
+     "reels": 1
+    },
+    {
+     "tag": "health",
+     "reels": 1
+    }
+   ],
+   "formats": [
+    {
+     "format": "comparison",
+     "reels": 1
+    }
+   ],
+   "languages": [
+    "english"
+   ],
+   "face_on_camera": 1,
+   "talks_to_camera": 1,
+   "hook_strength": 2,
+   "production_quality": 3,
+   "energy": 2,
+   "brands_worked_with": [
+    "bistro",
+    "third wave coffee",
+    "sorry sugar"
+   ],
+   "safety_flags": [],
+   "audience": [
+    "young indians into coffee and health"
+   ],
+   "summaries": [
+    "Woman rates coffee brands by sugar content with on-screen scores."
+   ]
+  },
+  "reels": [
+   {
+    "audience": "young Indians into coffee and health",
+    "brands_shown": [
+     "Bistro",
+     "Third Wave Coffee",
+     "Sorry Sugar"
+    ],
+    "energy": 2,
+    "face_on_camera": true,
+    "format": "comparison",
+    "hook": "Woman holds finger to lips while looking sideways.",
+    "hook_strength": 2,
+    "language": "English",
+    "niche": [
+     "coffee reviews",
+     "nutrition",
+     "health"
+    ],
+    "product_integration": "comparison",
+    "production_quality": 3,
+    "safety_flags": [],
+    "setting": "home interior",
+    "summary": "Woman rates coffee brands by sugar content with on-screen scores.",
+    "talks_to_camera": true
+   }
+  ],
+  "fits": {
+   "Sorry Sugar": {
+    "pitch": "She would rate Sorry Sugar against other cafe coffees by sugar content with on-screen scores to crown Sorry Sugar the low-sugar pick.",
+    "reasons": [
+     "Her reel niche is coffee reviews plus nutrition and health, an exact match for low-sugar coffee.",
+     "She already does a comparison format rating coffee brands by sugar with on-screen scores, just as the brief asks.",
+     "She is face-on-camera and talks to camera to young Indians into coffee and health, matching young urban coffee drinkers."
+    ],
+    "risks": [
+     "Only 1 reel observed, so very limited proof of consistency.",
+     "Hook strength 2 suggests weak openings that may not stop scroll.",
+     "Listed work with Third Wave Coffee is potential competitor overlap and prior Sorry Sugar work could feel repetitive."
+    ],
+    "score": 84,
+    "verdict": "strong"
+   },
+   "Harissons": {
+    "pitch": "She would pack three days of work-plus-gym essentials into the ODYSSEY in one take while scoring her travel coffee picks for sugar on-screen.",
+    "reasons": [
+     "Talks to camera in English with face on-camera, matching the brief's on-camera packing demo need.",
+     "Young Indians into coffee and health audience partly overlaps young professionals.",
+     "Uses comparison with on-screen scores, which could translate to showing the anti-theft pocket and USB port."
+    ],
+    "risks": [
+     "Niche mismatch: coffee reviews / nutrition / health with no travel packing seen for a travellers-focused backpack.",
+     "Weak hooks: hook_strength 2 risks losing viewers before the unbroken packing shot and feature demos.",
+     "Thin evidence: only 1 reel observed, so no proof of handling a three-day pack or unbroken shot."
+    ],
+    "score": 32,
+    "verdict": "poor"
+   }
+  }
+ },
+ "creator-8_DcfJOxWTVt": {
+  "profile": {
+   "reels": 1,
+   "niches": [
+    {
+     "tag": "coffee reviews",
+     "reels": 1
+    },
+    {
+     "tag": "low sugar",
+     "reels": 1
+    },
+    {
+     "tag": "healthy lifestyle",
+     "reels": 1
+    }
+   ],
+   "formats": [
+    {
+     "format": "review",
+     "reels": 1
+    }
+   ],
+   "languages": [
+    "english"
+   ],
+   "face_on_camera": 1,
+   "talks_to_camera": 1,
+   "hook_strength": 4,
+   "production_quality": 3,
+   "energy": 3,
+   "brands_worked_with": [
+    "bistro by blinkit",
+    "blue tokai",
+    "third wave coffee",
+    "sorry sugar",
+    "starbucks"
+   ],
+   "safety_flags": [],
+   "audience": [
+    "health-conscious young coffee drinkers in india"
+   ],
+   "summaries": [
+    "Woman in bedroom rates five coffee brands by sugar content with scores on screen."
+   ]
+  },
+  "reels": [
+   {
+    "audience": "health-conscious young coffee drinkers in India",
+    "brands_shown": [
+     "Bistro by Blinkit",
+     "Blue Tokai",
+     "Third Wave Coffee",
+     "Sorry Sugar",
+     "Starbucks"
+    ],
+    "energy": 3,
+    "face_on_camera": true,
+    "format": "review",
+    "hook": "Holds pink tumbler as text teases rating coffees by sugar content.",
+    "hook_strength": 4,
+    "language": "English",
+    "niche": [
+     "coffee reviews",
+     "low sugar",
+     "healthy lifestyle"
+    ],
+    "product_integration": "natural use",
+    "production_quality": 3,
+    "safety_flags": [],
+    "setting": "home bedroom",
+    "summary": "Woman in bedroom rates five coffee brands by sugar content with scores on screen.",
+    "talks_to_camera": true
+   }
+  ],
+  "fits": {
+   "Sorry Sugar": {
+    "pitch": "Woman rates five Delhi NCR coffees by sugar content with on-screen scores to crown Sorry Sugar as the low-sugar pick.",
+    "reasons": [
+     "Already made a review rating five coffee brands by sugar content with scores on screen, matching the brief format exactly.",
+     "Niches are coffee reviews, low sugar, and healthy lifestyle for health-conscious young coffee drinkers in India.",
+     "Face-on-camera English talks-to-camera style with hook strength 4 suits young urban coffee drinkers."
+    ],
+    "risks": [
+     "Recent reels feature competitor coffee brands Blue Tokai, Third Wave Coffee and Starbucks.",
+     "Only one reel observed, so limited proof of consistency and Delhi NCR audience pull.",
+     "Production quality 3 bedroom setup may not showcase a Delhi NCR cafe chain experience."
+    ],
+    "score": 92,
+    "verdict": "strong"
+   },
+   "Harissons": {
+    "pitch": "Pack three days of work essentials plus low-sugar coffee kit into the ODYSSEY 40L in one unbroken shot while rating what fits and demoing the hidden pocket and USB port.",
+    "reasons": [
+     "Talks to camera in English with on-screen scores, a review format that could demo the anti-theft pocket and USB port on camera.",
+     "Hook strength 4 with face-on-camera delivery suited to a one-shot pack video.",
+     "Reaches health-conscious young coffee drinkers in India, partial overlap with young professionals."
+    ],
+    "risks": [
+     "Core niche is coffee reviews / low sugar / healthy lifestyle with no travel packing content seen.",
+     "Only one bedroom-based reel observed, no evidence of packing a three-day trip in one unbroken shot.",
+     "Audience is coffee drinkers, not travellers, so travel utility for the 40L may not resonate."
+    ],
+    "score": 28,
+    "verdict": "poor"
+   }
+  }
+ },
+ "creator-7": {
+  "profile": {
+   "reels": 1,
+   "niches": [
+    {
+     "tag": "coffee reviews",
+     "reels": 1
+    },
+    {
+     "tag": "low sugar",
+     "reels": 1
+    },
+    {
+     "tag": "indian cafes",
+     "reels": 1
+    }
+   ],
+   "formats": [
+    {
+     "format": "comparison",
+     "reels": 1
+    }
+   ],
+   "languages": [
+    "english"
+   ],
+   "face_on_camera": 1,
+   "talks_to_camera": 1,
+   "hook_strength": 4,
+   "production_quality": 3,
+   "energy": 3,
+   "brands_worked_with": [
+    "bistro",
+    "blue tokai",
+    "sorry sugar",
+    "third wave coffee",
+    "sleepy owl"
+   ],
+   "safety_flags": [],
+   "audience": [
+    "health-conscious young indians into coffee"
+   ],
+   "summaries": [
+    "A woman seated at home sips iced coffee while rating five coffee brands by sugar content with her dog nearby."
+   ]
+  },
+  "reels": [
+   {
+    "audience": "health-conscious young Indians into coffee",
+    "brands_shown": [
+     "Bistro",
+     "Blue Tokai",
+     "Sorry Sugar",
+     "Third Wave Coffee",
+     "Sleepy Owl"
+    ],
+    "energy": 3,
+    "face_on_camera": true,
+    "format": "comparison",
+    "hook": "On-screen text promises rating coffees by sugar content.",
+    "hook_strength": 4,
+    "language": "English",
+    "niche": [
+     "coffee reviews",
+     "low sugar",
+     "Indian cafes"
+    ],
+    "product_integration": "comparison",
+    "production_quality": 3,
+    "safety_flags": [],
+    "setting": "home living room",
+    "summary": "A woman seated at home sips iced coffee while rating five coffee brands by sugar content with her dog nearby.",
+    "talks_to_camera": true
+   }
+  ],
+  "fits": {
+   "Sorry Sugar": {
+    "pitch": "She sips through five coffees at home with her dog nearby, rating each by sugar content to crown Sorry Sugar the low-sugar winner.",
+    "reasons": [
+     "Already made a comparison reel rating five coffee brands by sugar content while sipping iced coffee on camera",
+     "Niches are coffee reviews, low sugar, and indian cafes with a health-conscious young Indian coffee audience",
+     "Talks to camera with face on camera and hook_strength 4, matching the brief's compare-and-pick format"
+    ],
+    "risks": [
+     "Previously featured Blue Tokai, Third Wave Coffee and Sleepy Owl, creating competitor clutter around Sorry Sugar",
+     "Only one reel observed, so limited evidence of consistent performance",
+     "Production_quality 3 is casual at-home style which may feel less premium for a cafe chain push"
+    ],
+    "score": 92,
+    "verdict": "strong"
+   },
+   "Harissons": {
+    "pitch": "Rating her 3-day workation essentials like coffees while packing them into the ODYSSEY 40L in one take and demoing the anti-theft pocket and USB port.",
+    "reasons": [
+     "Talks to camera in English with hook_strength 4 in a comparison format that maps to a pack-with-me demo",
+     "Face-on-camera seated home style with energy 3 is clear and personable for young professionals",
+     "Existing audience of health-conscious young Indians partially overlaps young professionals in age and language"
+    ],
+    "risks": [
+     "Niche mismatch: all observed work is coffee reviews / low sugar / indian cafes with no travel or packing content",
+     "Only 1 reel observed, so no proof of handling an unbroken packing shot plus hidden pocket and USB demo",
+     "At-home sipping setup with production_quality 3 shows no travel context for Three Days. One ODYSSEY."
+    ],
+    "score": 28,
+    "verdict": "poor"
+   }
+  }
+ }
+}

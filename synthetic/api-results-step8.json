@@ -1,0 +1,345 @@
+{
+ "good.mp4": {
+  "items": [
+   {
+    "key": "product_on_screen",
+    "label": "Product on screen",
+    "verdict": "fail",
+    "detail": "Sorry Sugar coffee cup never appears on screen. Show it clearly, ideally in the first few seconds.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.8
+   },
+   {
+    "key": "must_say_1",
+    "label": "Says: Sorry Sugar",
+    "verdict": "fail",
+    "detail": "Not said: \"Sorry Sugar\". Add it in your own words.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark",
+     "transcript"
+    ],
+    "confidence": 0.9
+   },
+   {
+    "key": "must_say_2",
+    "label": "Says: it is low in sugar",
+    "verdict": "fail",
+    "detail": "Not said: \"it is low in sugar\". Add it in your own words.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark",
+     "transcript"
+    ],
+    "confidence": 0.9
+   },
+   {
+    "key": "ad_disclosure",
+    "label": "Ad disclosure",
+    "verdict": "pass",
+    "detail": "Disclosure said and shown on screen at 0:00: \"an ad, a paid partnership\".",
+    "at_s": 0,
+    "until_s": null,
+    "quote": "an ad, a paid partnership",
+    "sources": [
+     "spark",
+     "transcript"
+    ],
+    "confidence": 0.9
+   },
+   {
+    "key": "no_competitors",
+    "label": "No competitor brands",
+    "verdict": "pass",
+    "detail": "No competitor brand is named or shown.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.75
+   },
+   {
+    "key": "other_brands",
+    "label": "Other brands in the video",
+    "verdict": "pass",
+    "detail": "Also named: Dewdrop. Not on the brief's banned list.",
+    "at_s": 0,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.7
+   }
+  ],
+  "summary": "Your disclosure is great with the on-screen #ad and the spoken paid partnership note. Please re-film using only the Sorry Sugar coffee cup, saying Sorry Sugar and that it is low in sugar, and remove the Dewdrop mention and bottle.",
+  "durationS": 14.02,
+  "transcript": {
+   "transcript": "Hi, everyone. Quick heads up. This is an an ad, a paid partnership with Dewdrop. I have been using the Dewdrop Glow Serum every night for two weeks and my skin feels so soft. Use code dew10 for 10% off",
+   "durationMs": 14080,
+   "turns": [
+    {
+     "startMs": 0,
+     "endMs": 13580,
+     "text": "Hi, everyone. Quick heads up. This is an an ad, a paid partnership with Dewdrop. I have been using the Dewdrop Glow Serum every night for two weeks and my skin feels so soft. Use code dew10 for 10% off"
+    }
+   ]
+  },
+  "productBoxes": [],
+  "fps": 25,
+  "usage": {
+   "spark": {
+    "input_tokens": 4941,
+    "output_tokens": 3311,
+    "total_tokens": 8252
+   },
+   "samFrames": 350,
+   "audioSeconds": 14
+  },
+  "models": [
+   "muse-spark-1.3",
+   "muse-voice-transcribe-1.0",
+   "sam-3.1"
+  ],
+  "ms": 34013
+ },
+ "bad.mp4": {
+  "items": [
+   {
+    "key": "product_on_screen",
+    "label": "Product on screen",
+    "verdict": "fail",
+    "detail": "Sorry Sugar coffee cup never appears on screen. Show it clearly, ideally in the first few seconds.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.8
+   },
+   {
+    "key": "must_say_1",
+    "label": "Says: Sorry Sugar",
+    "verdict": "fail",
+    "detail": "Not said: \"Sorry Sugar\". Add it in your own words.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark",
+     "transcript"
+    ],
+    "confidence": 0.9
+   },
+   {
+    "key": "must_say_2",
+    "label": "Says: it is low in sugar",
+    "verdict": "fail",
+    "detail": "Not said: \"it is low in sugar\". Add it in your own words.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark",
+     "transcript"
+    ],
+    "confidence": 0.9
+   },
+   {
+    "key": "ad_disclosure",
+    "label": "Ad disclosure",
+    "verdict": "fail",
+    "detail": "No ad disclosure. Say \"this is a paid partnership with Sorry Sugar\" or add #ad on screen.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.6
+   },
+   {
+    "key": "no_competitors",
+    "label": "No competitor brands",
+    "verdict": "pass",
+    "detail": "No competitor brand is named or shown.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.75
+   },
+   {
+    "key": "other_brands",
+    "label": "Other brands in the video",
+    "verdict": "pass",
+    "detail": "Also named: Lumen Skin. Not on the brief's banned list.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.7
+   }
+  ],
+  "summary": "Thanks for a clear, friendly chat that feels natural on camera. To start, please reshoot featuring the Sorry Sugar coffee cup, saying Sorry Sugar and that it is low in sugar, and adding an ad disclosure.",
+  "durationS": 10.03,
+  "transcript": {
+   "transcript": "Hey guys, today I am talking about skincare. honestly Lumen skin is my favorite brand nothing beats it this serum is okay I guess bye",
+   "durationMs": 10080,
+   "turns": [
+    {
+     "startMs": 0,
+     "endMs": 9580,
+     "text": "Hey guys, today I am talking about skincare. honestly Lumen skin is my favorite brand nothing beats it this serum is okay I guess bye"
+    }
+   ]
+  },
+  "productBoxes": [],
+  "fps": 25,
+  "usage": {
+   "spark": {
+    "input_tokens": 3568,
+    "output_tokens": 3024,
+    "total_tokens": 6592
+   },
+   "samFrames": 249,
+   "audioSeconds": 10
+  },
+  "models": [
+   "muse-spark-1.3",
+   "muse-voice-transcribe-1.0",
+   "sam-3.1"
+  ],
+  "ms": 30613
+ },
+ "hindi.mp4": {
+  "items": [
+   {
+    "key": "product_on_screen",
+    "label": "Product on screen",
+    "verdict": "fail",
+    "detail": "Sorry Sugar coffee cup never appears on screen. Show it clearly, ideally in the first few seconds.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.8
+   },
+   {
+    "key": "must_say_1",
+    "label": "Says: Sorry Sugar",
+    "verdict": "fail",
+    "detail": "Not said: \"Sorry Sugar\". Add it in your own words.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark",
+     "transcript"
+    ],
+    "confidence": 0.9
+   },
+   {
+    "key": "must_say_2",
+    "label": "Says: it is low in sugar",
+    "verdict": "fail",
+    "detail": "Not said: \"it is low in sugar\". Add it in your own words.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark",
+     "transcript"
+    ],
+    "confidence": 0.9
+   },
+   {
+    "key": "ad_disclosure",
+    "label": "Ad disclosure",
+    "verdict": "pass",
+    "detail": "Disclosure shown on screen at 0:00: \"#ad\".",
+    "at_s": 0,
+    "until_s": null,
+    "quote": "#ad",
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.9
+   },
+   {
+    "key": "no_competitors",
+    "label": "No competitor brands",
+    "verdict": "pass",
+    "detail": "No competitor brand is named or shown.",
+    "at_s": null,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.75
+   },
+   {
+    "key": "other_brands",
+    "label": "Other brands in the video",
+    "verdict": "pass",
+    "detail": "Also named: Dewdrop. Not on the brief's banned list.",
+    "at_s": 1,
+    "until_s": null,
+    "quote": null,
+    "sources": [
+     "spark"
+    ],
+    "confidence": 0.7
+   }
+  ],
+  "summary": "You did great keeping #ad on screen the whole time and saying it is an ad upfront, that disclosure part is perfect. The one thing to fix first is to reshoot with the Sorry Sugar coffee cup and say Sorry Sugar is low in sugar, and remove the Dewdrop serum.",
+  "durationS": 12.07,
+  "transcript": {
+   "transcript": "नमस्ते दोस्तों, ये एक विज्ञापन है, Dewdrop के साथ पेड़ पार्टनरशिप, मैं दो हफ्तों से Dewdrop Glow Serum इस्तेमाल कर रही हूँ, दस प्रतिशत छूट के लिए कोड Dew10 इस्तेमाल करें",
+   "durationMs": 12080,
+   "turns": [
+    {
+     "startMs": 0,
+     "endMs": 11580,
+     "text": "नमस्ते दोस्तों, ये एक विज्ञापन है, Dewdrop के साथ पेड़ पार्टनरशिप, मैं दो हफ्तों से Dewdrop Glow Serum इस्तेमाल कर रही हूँ, दस प्रतिशत छूट के लिए कोड Dew10 इस्तेमाल करें"
+    }
+   ]
+  },
+  "productBoxes": [],
+  "fps": 25,
+  "usage": {
+   "spark": {
+    "input_tokens": 4400,
+    "output_tokens": 3318,
+    "total_tokens": 7718
+   },
+   "samFrames": 300,
+   "audioSeconds": 12
+  },
+  "models": [
+   "muse-spark-1.3",
+   "muse-voice-transcribe-1.0",
+   "sam-3.1"
+  ],
+  "ms": 30096
+ }
+}

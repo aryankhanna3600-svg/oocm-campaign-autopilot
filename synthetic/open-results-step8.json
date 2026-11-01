@@ -1,0 +1,173 @@
+{
+ "good.mp4": {
+  "brand": {
+   "api": false,
+   "open": false,
+   "quoteSupport": 0
+  },
+  "disclosure": {
+   "api": true,
+   "open": true
+  },
+  "product": {
+   "api": "fail",
+   "open": false
+  },
+  "lowSugar": {
+   "api": false,
+   "open": false,
+   "quoteSupport": 0
+  },
+  "otherBrands": {
+   "api": [
+    "Dewdrop"
+   ],
+   "open": [
+    "Dewdrop"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 8724,
+   "total_tokens": 9088,
+   "completion_tokens": 364,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 294
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 294
+   }
+  },
+  "ms": 9820,
+  "apiMs": 34013,
+  "raw": {
+   "brand_mentioned": false,
+   "brand_at_s": null,
+   "brand_quote": null,
+   "product_on_screen": false,
+   "product_from_s": null,
+   "low_sugar_said": false,
+   "low_sugar_quote": null,
+   "disclosure_present": true,
+   "other_brands": [
+    "Dewdrop"
+   ]
+  }
+ },
+ "bad.mp4": {
+  "brand": {
+   "api": false,
+   "open": false,
+   "quoteSupport": 0
+  },
+  "disclosure": {
+   "api": false,
+   "open": false
+  },
+  "product": {
+   "api": "fail",
+   "open": false
+  },
+  "lowSugar": {
+   "api": false,
+   "open": false,
+   "quoteSupport": 0
+  },
+  "otherBrands": {
+   "api": [
+    "Lumen Skin"
+   ],
+   "open": [
+    "Lumen skin"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 6373,
+   "total_tokens": 6817,
+   "completion_tokens": 444,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 374
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 374
+   }
+  },
+  "ms": 5231,
+  "apiMs": 30613,
+  "raw": {
+   "brand_mentioned": false,
+   "brand_at_s": null,
+   "brand_quote": null,
+   "product_on_screen": false,
+   "product_from_s": null,
+   "low_sugar_said": false,
+   "low_sugar_quote": null,
+   "disclosure_present": false,
+   "other_brands": [
+    "Lumen skin"
+   ]
+  }
+ },
+ "hindi.mp4": {
+  "brand": {
+   "api": false,
+   "open": false,
+   "quoteSupport": 0
+  },
+  "disclosure": {
+   "api": true,
+   "open": true
+  },
+  "product": {
+   "api": "fail",
+   "open": false
+  },
+  "lowSugar": {
+   "api": false,
+   "open": false,
+   "quoteSupport": 0
+  },
+  "otherBrands": {
+   "api": [
+    "Dewdrop"
+   ],
+   "open": [
+    "Dewdrop"
+   ]
+  },
+  "tokens": {
+   "prompt_tokens": 7564,
+   "total_tokens": 8051,
+   "completion_tokens": 487,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 417
+   },
+   "output_tokens_details": {
+    "reasoning_tokens": 417
+   }
+  },
+  "ms": 9227,
+  "apiMs": 30096,
+  "raw": {
+   "brand_mentioned": false,
+   "brand_at_s": null,
+   "brand_quote": null,
+   "product_on_screen": false,
+   "product_from_s": null,
+   "low_sugar_said": false,
+   "low_sugar_quote": null,
+   "disclosure_present": true,
+   "other_brands": [
+    "Dewdrop"
+   ]
+  }
+ }
+}

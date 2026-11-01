@@ -1,0 +1,12 @@
+2829/2026-10-22 raw=show_backups outcome=show_backups label=[none,show_backups]
+2829/2026-10-23 raw=show_backups outcome=show_backups label=[show_backups,tell_brand]
+2829/2026-10-25 raw=tell_brand MISS outcome=flag_admin label=[flag_admin,none]
+3119/2026-10-30 raw=show_backups outcome=show_backups label=[none,show_backups]
+3120/2026-10-31 raw=show_backups outcome=show_backups label=[none,show_backups]
+3121/2026-10-30 raw=show_backups outcome=show_backups label=[none,show_backups]
+3122/2026-10-31 raw=show_backups outcome=show_backups label=[none,show_backups,tell_brand]
+    line: "28 creators are waiting for your pick — shortlist the ones you want."
+3124/2026-10-30 raw=tell_brand outcome=tell_brand label=[none,tell_brand]
+    line: "28 creators are waiting for your pick — shortlist the ones you want."
+3124/2026-10-31 raw=tell_brand outcome=tell_brand label=[none,tell_brand]
+raw=8/9 final-outcome=9/9

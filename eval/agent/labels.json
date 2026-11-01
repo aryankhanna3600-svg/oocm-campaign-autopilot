@@ -1,0 +1,352 @@
+{
+ "days": [
+  {
+   "campaign_id": 2701,
+   "day": "2026-10-15",
+   "problem": "event-tomorrow-zero-applicants",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-18",
+   "good": [
+    "tell_brand",
+    "flag_admin"
+   ],
+   "evidence": "brief_approve 10-15 notified_creators=4; 0 applications ever"
+  },
+  {
+   "campaign_id": 2701,
+   "day": "2026-10-16",
+   "problem": "event-today-zero-applicants",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-18",
+   "good": [
+    "tell_brand"
+   ],
+   "evidence": "0 apps; zero notification rows this day"
+  },
+  {
+   "campaign_id": 2701,
+   "day": "2026-10-17",
+   "problem": "dead-campaign-still-live",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-18",
+   "good": [
+    "tell_brand",
+    "flag_admin"
+   ],
+   "evidence": "apply_by 10-16 passed, event over; auto_close audit 10-18 released=0"
+  },
+  {
+   "campaign_id": 2705,
+   "day": "2026-10-16",
+   "problem": "one-applicant-for-5-slots-event-tomorrow",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-19",
+   "good": [
+    "tell_brand",
+    "show_backups"
+   ],
+   "evidence": "1 app applied 10-16; new_application to admin+brand"
+  },
+  {
+   "campaign_id": 2705,
+   "day": "2026-10-17",
+   "problem": "event-today-one-applicant",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-19",
+   "good": [
+    "tell_brand"
+   ],
+   "evidence": "no activity rows this day"
+  },
+  {
+   "campaign_id": 2708,
+   "day": "2026-10-16",
+   "problem": "thin-funnel-plus-visit-logistics",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-19",
+   "good": [
+    "tell_brand",
+    "nudge_creators"
+   ],
+   "evidence": "2 apps; application_accepted + accepted_by_ops 10-16; 2 deliverables created"
+  },
+  {
+   "campaign_id": 2708,
+   "day": "2026-10-17",
+   "problem": "event-today-2-creators",
+   "human_action": "sla_visit_nudge",
+   "human_date": "2026-10-17",
+   "good": [
+    "nudge_creators",
+    "tell_brand"
+   ],
+   "evidence": "deadline_reminder + sla_visit_date_due_nudge sent this day"
+  },
+  {
+   "campaign_id": 2708,
+   "day": "2026-10-18",
+   "problem": "event-over-no-deliveries",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-19",
+   "good": [
+    "tell_brand",
+    "none"
+   ],
+   "evidence": "renudge to brand; nothing delivered"
+  },
+  {
+   "campaign_id": 2700,
+   "day": "2026-10-17",
+   "problem": "thin-funnel-6-for-20-slots",
+   "human_action": "campaign_completed",
+   "human_date": "2026-10-21",
+   "good": [
+    "show_backups",
+    "tell_brand"
+   ],
+   "evidence": "apps 10-16..19; price_proposed x3 10-16"
+  },
+  {
+   "campaign_id": 2700,
+   "day": "2026-10-19",
+   "problem": "negotiating-tail-no-new-funnel",
+   "human_action": "campaign_completed",
+   "human_date": "2026-10-21",
+   "good": [
+    "tell_brand",
+    "show_backups"
+   ],
+   "evidence": "last apps 10-19; price_proposed 10-18/19"
+  },
+  {
+   "campaign_id": 2700,
+   "day": "2026-10-20",
+   "problem": "deadline-tomorrow-roster-short",
+   "human_action": "campaign_completed",
+   "human_date": "2026-10-21",
+   "good": [
+    "tell_brand"
+   ],
+   "evidence": "no rows this day; completed + closed_unselected x6 10-21"
+  },
+  {
+   "campaign_id": 2827,
+   "day": "2026-10-22",
+   "problem": "rejection-wave-churn",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-28",
+   "good": [
+    "tell_brand",
+    "show_backups"
+   ],
+   "evidence": "12 removed_at 10-22; application_rejected x6; 13+13 new_application 10-21/22"
+  },
+  {
+   "campaign_id": 2827,
+   "day": "2026-10-24",
+   "problem": "brand-disengaged-trickle",
+   "human_action": "campaign_pick_creators",
+   "human_date": "2026-10-26",
+   "good": [
+    "flag_admin",
+    "tell_brand"
+   ],
+   "evidence": "autopilot_paused notif 10-24; 4 new apps"
+  },
+  {
+   "campaign_id": 2827,
+   "day": "2026-10-26",
+   "problem": "brand-has-not-picked",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-28",
+   "good": [
+    "tell_brand"
+   ],
+   "evidence": "campaign_pick_creators 10-26 + application_waiting x3"
+  },
+  {
+   "campaign_id": 2827,
+   "day": "2026-10-27",
+   "problem": "decide-today-or-loses-funnel",
+   "human_action": "campaign_auto_closed",
+   "human_date": "2026-10-28",
+   "good": [
+    "tell_brand"
+   ],
+   "evidence": "last_call + waiting x5 10-27"
+  },
+  {
+   "campaign_id": 2828,
+   "day": "2026-10-23",
+   "problem": "post-reject-churn-plus-pause-resume-chaos",
+   "human_action": "campaign_paused",
+   "human_date": "2026-10-24",
+   "good": [
+    "tell_brand",
+    "flag_admin"
+   ],
+   "evidence": "14 rejected 10-22; paused+resumed 10-22; 208 new_brief"
+  },
+  {
+   "campaign_id": 2828,
+   "day": "2026-10-25",
+   "problem": "campaign-paused-by-brand",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "none",
+    "flag_admin"
+   ],
+   "evidence": "paused_notice_at 10-24; no resume row; brand actions invalid in brand_paused"
+  },
+  {
+   "campaign_id": 3123,
+   "day": "2026-10-30",
+   "problem": "negotiation-queue",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "tell_brand",
+    "none"
+   ],
+   "evidence": "price_proposed x9 10-29 x11 10-30; 42 apps; no deliverables"
+  },
+  {
+   "campaign_id": 3123,
+   "day": "2026-10-31",
+   "problem": "negotiation-queue-louder",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "tell_brand"
+   ],
+   "evidence": "apps through 10-31; live, outcome unknown"
+  },
+  {
+   "campaign_id": 3138,
+   "day": "2026-10-30",
+   "problem": "short-roster-10-of-25-wanted",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "show_backups"
+   ],
+   "evidence": "10 apps; 18 pieces 10-30; 0 waiting; 0 past-due; live"
+  },
+  {
+   "campaign_id": 2700,
+   "day": "2026-10-16",
+   "problem": "funnel-moving-negotiation-active",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "none"
+   ],
+   "evidence": "price_proposed x6 10-16; apps arriving; no waiting/past-due"
+  },
+  {
+   "campaign_id": 2700,
+   "day": "2026-10-18",
+   "problem": "funnel-moving",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "none"
+   ],
+   "evidence": "price_proposed x2 10-18; apps 10-16..19; completed 10-21"
+  },
+  {
+   "campaign_id": 2827,
+   "day": "2026-10-21",
+   "problem": "launch-day-flow",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "none"
+   ],
+   "evidence": "blast 10-21; new_brief x48; new_application x26; nothing stuck yet"
+  },
+  {
+   "campaign_id": 2828,
+   "day": "2026-10-21",
+   "problem": "launch-day-flow",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "none"
+   ],
+   "evidence": "blast 10-21; new_brief x90; new_application x29; invites flowing"
+  },
+  {
+   "campaign_id": 2800,
+   "day": "2026-10-20",
+   "problem": "early-quiet-in-time",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "none"
+   ],
+   "evidence": "applied 10-18; due 10-23; no notification rows; nothing due"
+  },
+  {
+   "campaign_id": 2800,
+   "day": "2026-10-22",
+   "problem": "due-tomorrow-nothing-yet",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "none",
+    "tell_brand"
+   ],
+   "evidence": "2 pieces due 10-23 unsubmitted; 1 draft approved; no rows this day"
+  },
+  {
+   "campaign_id": 2800,
+   "day": "2026-10-24",
+   "problem": "thin-funnel-window-closing",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "tell_brand",
+    "none"
+   ],
+   "evidence": "VISIBLE facts only: 1 active/2 wanted, window closes 10-25, no waiting/past-due (creator 1075 is_demo in current prod; product+harness both exclude demo pieces)"
+  },
+  {
+   "campaign_id": 2800,
+   "day": "2026-10-26",
+   "problem": "thin-funnel-window-closed",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "tell_brand",
+    "none"
+   ],
+   "evidence": "VISIBLE facts only: 1 active/2 wanted, apply_by 10-25 passed, nothing waiting (1075 demo-excluded)"
+  },
+  {
+   "campaign_id": 2828,
+   "day": "2026-10-29",
+   "problem": "quiet-8d-in-time",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "none",
+    "flag_admin"
+   ],
+   "evidence": "phase is brand_paused (paused 10-24, no resume): tell_brand is invalid there by validation; 1 creator quiet 8d, due 11-06; nothing due"
+  },
+  {
+   "campaign_id": 3138,
+   "day": "2026-10-29",
+   "problem": "event-tomorrow-zero-applicants",
+   "human_action": null,
+   "human_date": null,
+   "good": [
+    "tell_brand",
+    "flag_admin"
+   ],
+   "evidence": "0 applications before 10-30; event 10-30; no notification rows"
+  }
+ ]
+}

@@ -1,0 +1,171 @@
+{
+  "campaign_id": 2705,
+  "campaign_name": "Unplugged with Abhishek at Sorry Sugar Central Plaza · Sat 17 Oct",
+  "day": "2026-10-16",
+  "phase": "open",
+  "facts_hash": "2e5602969f269a9a",
+  "facts": [
+    {
+      "id": "phase",
+      "detail": "Unplugged with Abhishek at Sorry Sugar Central Plaza · Sat 17 Oct is open."
+    },
+    {
+      "id": "applicants",
+      "detail": "Applicants: 1 pending (5 creators wanted)."
+    },
+    {
+      "id": "fit",
+      "detail": "No fit scores yet."
+    },
+    {
+      "id": "safety",
+      "detail": "No safety flags on live applicants."
+    },
+    {
+      "id": "drafts_waiting",
+      "detail": "No drafts waiting on the brand."
+    },
+    {
+      "id": "pieces_past_due",
+      "detail": "Nothing past its date."
+    },
+    {
+      "id": "silent_creators",
+      "detail": "Every active creator has sent something or is still in time."
+    },
+    {
+      "id": "brand_activity",
+      "detail": "No brand-attributed action on this campaign up to this day (reconstructed; app last-seen is not time-travelable and is omitted)."
+    },
+    {
+      "id": "apply_by",
+      "detail": "Creators can apply until 2026-10-17."
+    },
+    {
+      "id": "budget",
+      "detail": "No budget stated on the campaign."
+    },
+    {
+      "id": "agent_history",
+      "detail": "The agent did not exist yet; no agent history."
+    }
+  ],
+  "applicants": {
+    "pending": 1
+  },
+  "wanted": 5,
+  "apply_days_left": 1,
+  "waiting_drafts": 0,
+  "pieces_past_due": 0,
+  "silent_pieces": 0,
+  "overdue": false,
+  "runs": [
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 736,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 461,
+        "output_tokens_details": {
+          "reasoning_tokens": 360
+        },
+        "total_tokens": 1197
+      },
+      "cost_usd": 0.00287925,
+      "latency_ms": 2330,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "flag_admin",
+        "admin_note": "1 pending vs 5 wanted, apply window closed 2026-10-17 and event 17 Oct passed with stage still open and no brand action.",
+        "confidence": 0.75,
+        "diagnosis": "Only 1 applicant for 5 wanted and the apply window is closed.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "phase",
+          "brand_activity"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": null
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 736,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 409,
+        "output_tokens_details": {
+          "reasoning_tokens": 309
+        },
+        "total_tokens": 1145
+      },
+      "cost_usd": 0.00265825,
+      "latency_ms": 1999,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "flag_admin",
+        "admin_note": "Only 1 pending applicant for 5 wanted and apply window closed 2026-10-17 with event 17 Oct passed, stage still open - needs human review.",
+        "confidence": 0.85,
+        "diagnosis": "Only 1 applicant for 5 wanted and the apply window is closed.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "phase"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": null
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 736,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 610,
+        "output_tokens_details": {
+          "reasoning_tokens": 501
+        },
+        "total_tokens": 1346
+      },
+      "cost_usd": 0.0035125,
+      "latency_ms": 2959,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "flag_admin",
+        "admin_note": "Open stage for 17 Oct event is past (31 Oct) with 1/5 applicants pending and zero brand actions; needs human review on whether to close/cancel.",
+        "confidence": 0.75,
+        "diagnosis": "Event on 17 Oct is past with only 1 of 5 applicants and no brand picks.",
+        "fact_ids": [
+          "phase",
+          "applicants",
+          "brand_activity",
+          "apply_by"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": null
+    }
+  ],
+  "assumptions": [],
+  "leakage": [
+    "prod snapshot is read at replay time; rows deleted since (if any) are invisible",
+    "brand tier/override/lock state is current, not as-of-day",
+    "creator 1152 fit profile scored 2026-10-28, after the day"
+  ]
+}

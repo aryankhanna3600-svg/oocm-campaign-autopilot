@@ -1,0 +1,188 @@
+{
+  "campaign_id": 2827,
+  "campaign_name": "Three Days. One ODYSSEY.",
+  "day": "2026-10-22",
+  "phase": "open",
+  "facts_hash": "7a499aeb220bdabf",
+  "facts": [
+    {
+      "id": "phase",
+      "detail": "Three Days. One ODYSSEY. is open."
+    },
+    {
+      "id": "applicants",
+      "detail": "Applicants: 21 pending, 6 rejected (125 creators wanted)."
+    },
+    {
+      "id": "fit",
+      "detail": "No fit scores yet."
+    },
+    {
+      "id": "safety",
+      "detail": "No safety flags on live applicants."
+    },
+    {
+      "id": "drafts_waiting",
+      "detail": "No drafts waiting on the brand."
+    },
+    {
+      "id": "pieces_past_due",
+      "detail": "Nothing past its date."
+    },
+    {
+      "id": "silent_creators",
+      "detail": "Every active creator has sent something or is still in time."
+    },
+    {
+      "id": "brand_activity",
+      "detail": "No brand-attributed action on this campaign up to this day (reconstructed; app last-seen is not time-travelable and is omitted)."
+    },
+    {
+      "id": "apply_by",
+      "detail": "Creators can apply until 2026-10-24."
+    },
+    {
+      "id": "budget",
+      "detail": "No budget stated on the campaign."
+    },
+    {
+      "id": "agent_history",
+      "detail": "The agent did not exist yet; no agent history."
+    }
+  ],
+  "applicants": {
+    "pending": 21,
+    "rejected": 6
+  },
+  "wanted": 125,
+  "apply_days_left": 2,
+  "waiting_drafts": 0,
+  "pieces_past_due": 0,
+  "silent_pieces": 0,
+  "overdue": false,
+  "runs": [
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 784,
+        "input_tokens_details": {
+          "cached_tokens": 497
+        },
+        "output_tokens": 258,
+        "output_tokens_details": {
+          "reasoning_tokens": 154
+        },
+        "total_tokens": 1042
+      },
+      "cost_usd": 0.0020765000000000002,
+      "latency_ms": 1576,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "show_backups",
+        "admin_note": "21 pending vs 125 wanted with apply window open until 2026-10-24 (2 days left), no fit scores and no brand activity yet.",
+        "confidence": 0.75,
+        "diagnosis": "Only 21 pending applicants for 125 wanted spots with 2 days left to apply.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "phase",
+          "fit"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "show_backups:<live backup count> more creators fit this brief — worth a look before you decide."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 784,
+        "input_tokens_details": {
+          "cached_tokens": 497
+        },
+        "output_tokens": 251,
+        "output_tokens_details": {
+          "reasoning_tokens": 152
+        },
+        "total_tokens": 1035
+      },
+      "cost_usd": 0.00204675,
+      "latency_ms": 4031,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "show_backups",
+        "admin_note": "Only 21 pending vs 125 wanted with apply window open until 2026-10-24; need alternates/invites to fill funnel.",
+        "confidence": 0.85,
+        "diagnosis": "Only 21 applicants pending toward 125 wanted with 2 days left to apply.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "phase"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "show_backups:<live backup count> more creators fit this brief — worth a look before you decide."
+    },
+    {
+      "model": "muse-spark-1.3",
+      "usage": {
+        "input_tokens": 784,
+        "input_tokens_details": {
+          "cached_tokens": 753
+        },
+        "output_tokens": 380,
+        "output_tokens_details": {
+          "reasoning_tokens": 277
+        },
+        "total_tokens": 1164
+      },
+      "cost_usd": 0.002595,
+      "latency_ms": 1937,
+      "attempts": 1,
+      "diagnosis": {
+        "action": "show_backups",
+        "admin_note": "21 pending vs 125 wanted with apply window closing 2026-10-24 (2 days left) and no fit scores yet; show alternates to fill funnel.",
+        "confidence": 0.78,
+        "diagnosis": "Only 21 pending for 125 wanted spots with 2 days left to apply.",
+        "fact_ids": [
+          "applicants",
+          "apply_by",
+          "fit"
+        ]
+      },
+      "validation": {
+        "ok": true,
+        "why": "validated"
+      },
+      "brand_line": "show_backups:<live backup count> more creators fit this brief — worth a look before you decide."
+    }
+  ],
+  "assumptions": [],
+  "leakage": [
+    "prod snapshot is read at replay time; rows deleted since (if any) are invisible",
+    "brand tier/override/lock state is current, not as-of-day",
+    "creator 1475 fit profile scored 2026-10-28, after the day",
+    "creator 1649 fit profile scored 2026-10-28, after the day",
+    "creator 1402 fit profile scored 2026-10-28, after the day",
+    "creator 1147 fit profile scored 2026-10-28, after the day",
+    "creator 1296 fit profile scored 2026-10-28, after the day",
+    "creator 1515 fit profile scored 2026-10-28, after the day",
+    "creator 1677 fit profile scored 2026-10-28, after the day",
+    "creator 1683 fit profile scored 2026-10-28, after the day",
+    "creator 1686 fit profile scored 2026-10-28, after the day",
+    "creator 1253 fit profile scored 2026-10-28, after the day",
+    "creator 1772 fit profile scored 2026-10-28, after the day",
+    "creator 1588 fit profile scored 2026-10-28, after the day",
+    "creator 1819 fit profile scored 2026-10-28, after the day",
+    "creator 1826 fit profile scored 2026-10-28, after the day",
+    "creator 1622 fit profile scored 2026-10-28, after the day",
+    "creator 1492 fit profile scored 2026-10-28, after the day",
+    "creator 1722 fit profile scored 2026-10-28, after the day",
+    "creator 1813 fit profile scored 2026-10-28, after the day"
+  ]
+}
