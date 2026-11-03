@@ -29,8 +29,8 @@ Every commit below is in this repo's history (`git log`):
 | 1-Nov | `76d17a9` | Step 8: strict must-say quotes in the open lane + synth baseline script |
 | 2-Nov | `546f0e5` | Builder: 150 s Muse budget before Claude fallback — API PR #479 |
 | 2-Nov | `bd6a0d8` | Meta client: read last message, not first — API PR #480 |
-| 3-Nov | `f1f1673` | Builder: one design run at a time, reload-safe — API PR #485 |
-| 3-Nov | `8ea3419` | Builder: design again with own numbers, honest notices — API PR #486 |
+| 3-Nov | `f1f1673` | Builder: one design run at a time, reload-safe — API PR #485 (only the diff: `patches/pr485-builder-session.diff`) |
+| 3-Nov | `8ea3419` | Builder: design again with own numbers, honest notices — API PR #486 (new file `src/builder/rules.ts`; changes to older files only as `patches/pr486-builder.diff`) |
 | 3-Nov | `2df849e` | Draft check: 500 MB cap, ffmpeg 480 s, don'ts scored, product-name fallback — API PR #487 |
 | 3-Nov | `05faf2e` | Admin: re-run AI draft check on a piece already with the brand — API PR #488 |
 | 3-Nov | `a0406be` | AI check card in chat — Web PR #150, App PR #65 |
@@ -123,3 +123,6 @@ Separately, campaign 3457 was built by Muse Spark 1.3 end to end, at a cost of $
 ## Who wrote what
 
 All application code in this repo was written by Claude Code running on Meta's Muse models — Spark 1.3 on the Meta API and Spark Open on Fireworks — and reviewed by Claude.
+
+## Built before the event, not part of this submission
+The builder's core files (`options.ts`, `session.ts`, `notify.ts`) were written on 14-Oct, before the hackathon. They are not in this repo. The hackathon changes to them are in `patches/` as plain diffs, so only the new work is shown.

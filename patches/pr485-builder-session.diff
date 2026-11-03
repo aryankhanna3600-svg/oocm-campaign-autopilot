@@ -1,0 +1,73 @@
+commit fccd0bf0e33f738ed7485da1c5085271c8427d78
+Author: AK <ak@AKs-Laptop.local>
+Date:   Tue Nov 3 11:51:48 2026 +0530
+
+    Builder: one design run at a time, reload-safe
+    
+    A reload or second tap during 'Design my campaigns' could start a second
+    paid run and lost the waiting screen. runOptions now takes an atomic claim
+    (tweaks.designing_since, 6-minute lease); a second call gets 409 'designing'.
+    The session view exposes designing so the page keeps waiting and polls.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SbHw74RUkAizu4pPDmmPf2
+
+diff --git a/src/services/builder/session.ts b/src/services/builder/session.ts
+index d639c3fa..6ba83e90 100644
+--- a/src/services/builder/session.ts
++++ b/src/services/builder/session.ts
+@@ -13,6 +13,7 @@
+  * per day, runs per domain per week unless a signed-in brand owns it, and a
+  * research queue of three. Budget is alerts only (utils/aiUsage).
+  */
++import { returnedRows } from "../../utils/dbResult";
+ import { createHash } from "crypto";
+ import { CreateDBConnection } from "../../db/create-connection";
+ import { CampaignBuilderSession } from "../../entity/CampaignBuilderSession";
+@@ -209,6 +210,46 @@ export async function runOptions(id: number, categories?: string[], picks?: impo
+   if (!s) throw new BuilderError(404, "not_found", "Session not found.");
+   if (!["researched", "options", "chosen", "built"].includes(s.state)) throw new BuilderError(409, "not_researched", s.state === "ai_failed" ? "Research failed; start again." : "Research is still running.");
+   if (!s.profile) throw new BuilderError(409, "no_profile", "Nothing was read yet.");
++  // One paid design run at a time per session. A reload or a second tap while the
++  // first run is working gets "designing" back instead of starting another run.
++  if (!(await claimDesign(s.id))) throw new BuilderError(409, "designing", "Samaira is still designing these. They will appear here when they are ready.");
++  try {
++    return await designNow(s, categories, picks);
++  } finally {
++    await releaseDesign(s.id);
++  }
++}
++
++/** How long a design claim holds before it counts as abandoned (a crash or restart mid-run). */
++export const DESIGN_LEASE_MINUTES = 6;
++
++/** Atomic claim on the design run, kept in tweaks.designing_since. */
++export async function claimDesign(id: number): Promise<boolean> {
++  const rows = await CreateDBConnection.query(
++    `UPDATE campaign_builder_session
++        SET tweaks = COALESCE(tweaks, '{}'::jsonb) || jsonb_build_object('designing_since', to_char(NOW() AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"'))
++      WHERE id = $1::int
++        AND (tweaks->>'designing_since' IS NULL
++             OR (tweaks->>'designing_since')::timestamptz < NOW() - ($2::int * INTERVAL '1 minute'))
++      RETURNING id`,
++    [id, DESIGN_LEASE_MINUTES],
++  );
++  return returnedRows(rows).length > 0;
++}
++
++export async function releaseDesign(id: number): Promise<void> {
++  try {
++    await CreateDBConnection.query(`UPDATE campaign_builder_session SET tweaks = tweaks - 'designing_since' WHERE id = $1::int AND tweaks ? 'designing_since'`, [id]);
++  } catch { /* the lease expires on its own */ }
++}
++
++/** True while a design run holds a live claim. Read by the session view so a reloaded page keeps waiting. */
++export function isDesigning(tweaks: Record<string, unknown> | null | undefined, now = Date.now()): boolean {
++  const at = tweaks && typeof tweaks.designing_since === "string" ? Date.parse(tweaks.designing_since) : NaN;
++  return Number.isFinite(at) && now - at < DESIGN_LEASE_MINUTES * 60_000;
++}
++
++async function designNow(s: CampaignBuilderSession, categories?: string[], picks?: import("./options").Picks): Promise<CampaignBuilderSession> {
+   const brand = s.brand_id ? await brandRepo().findOne({ where: { id: s.brand_id } }) : null;
+   const profile = s.profile as unknown as BrandProfile;
+   const r = await buildOptions({

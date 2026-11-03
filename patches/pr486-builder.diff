@@ -1,0 +1,378 @@
+commit 0637183a4c2d652d89e3a33d4feaad70f1ffda3e
+Author: AK <ak@AKs-Laptop.local>
+Date:   Tue Nov 3 12:57:39 2026 +0530
+
+    Builder: Design again with own numbers, honest notices, text briefs read the site
+    
+    - runOptions: three design runs per brief (429 design_cap), the brand's own
+      count, format and all-live-by date on every card, and a failed design never
+      breaks the session (old campaigns and choice kept; first design stays at
+      researched instead of ai_failed).
+    - A web address typed inside a pasted brief is read too.
+    - The read-done email and in-app now say Samaira read X and Design is one tap
+      away (it said 'designed three campaigns' before any design). Text briefs say
+      'your brief'. A failed read now tells the brand or lead.
+    - Nudges cover read-but-never-designed sessions, with words per state.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SbHw74RUkAizu4pPDmmPf2
+
+diff --git a/src/services/builder/notify.ts b/src/services/builder/notify.ts
+index 14e7a4bf..b726c34f 100644
+--- a/src/services/builder/notify.ts
++++ b/src/services/builder/notify.ts
+@@ -13,6 +13,8 @@ import { emailShell } from "../../utils/emailTemplate";
+ import { enqueue as enqueueWa } from "../../services/wa/outbox";
+ import { utilityReady, preferUtility } from "../../services/wa/utilityReady";
+ import logger from "../../utils/logger";
++import { whatWasRead, waitingLine } from "./rules";
++export { whatWasRead, waitingLine };
+ 
+ const WEB = process.env.WEB_BASE_URL || "https://outofcontextmarketing.com";
+ export const BRIEFS_READY_TEMPLATE = "oocm_brand_briefs_ready_v1";
+@@ -21,27 +23,33 @@ export const briefsReadyTemplate = () => preferUtility("oocm_brand_briefs_ready_
+ 
+ const firstName = (b: Brand): string => String((b as any).contact_name ?? b.name ?? "there").split(" ")[0] || "there";
+ 
+-export async function notifyBriefsReady(brand: Brand, args: { sessionId: number; matchCount: number | null; heroName: string | null; siteDomain: string | null }): Promise<void> {
++/**
++ * After the read, before any design (audit 3-Nov: this said "designed three
++ * campaigns" when nothing was designed yet, and Pocketfm never tapped Design).
++ */
++export async function notifyBriefsReady(brand: Brand, args: { sessionId: number; matchCount: number | null; heroName: string | null; siteDomain: string | null; fromText?: boolean }): Promise<void> {
+   const link = `${WEB}/brand/build/${args.sessionId}`;
++  const what = whatWasRead(args.siteDomain, !!args.fromText);
++  const line = `Samaira, our AI agent, read ${what}${args.heroName ? ` and found ${args.heroName}` : ""}. Tap Design and she builds three full campaigns in about two minutes.`;
+   try {
+     await createNotification({
+       user_id: brand.id, recipient_role: "brand", type: "builder_briefs_ready",
+-      title: "Your briefs are ready",
+-      body: `We read ${args.siteDomain ?? "your site"} and designed three campaigns${args.heroName ? ` around ${args.heroName}` : ""}. Pick one, change anything, and it is live the same day after approval.`,
++      title: `Samaira read ${what}`,
++      body: line,
+       ref_id: args.sessionId,
+     });
+   } catch (e: any) { logger.warn({ err: e?.message }, "briefs-ready in-app failed"); }
+   try {
+     const html = emailShell({
+-      preheader: "Three campaigns, designed from your site, are waiting in your profile.",
+-      heading: "Your briefs are",
+-      headingEm: "ready.",
+-      body: `<p>We read ${args.siteDomain ?? "your site"} and designed three campaigns${args.heroName ? ` around ${args.heroName}` : ""}.${args.matchCount ? ` ${args.matchCount} creators on out of context already match you.` : ""}</p>
+-<p>They are waiting in your profile. Pick one, change anything, and it is live the same day after approval. Your first brief is free.</p>`,
+-      button: { label: "See my campaigns", url: link },
++      preheader: "One tap and Samaira designs three full campaigns for you.",
++      heading: "Your campaigns are",
++      headingEm: "one tap away.",
++      body: `<p>${line}</p>${args.matchCount ? `<p>${args.matchCount} creators on out of context already match you.</p>` : ""}
++<p>Check her three picks, change any you like, and tap Design. Your first brief is free.</p>`,
++      button: { label: "Design my campaigns", url: link },
+       footerNote: `You asked for this on our site with ${brand.email}.`,
+     });
+-    await sendMailToUsers(brand.email, "Your briefs are ready", html, undefined, { kind: "builder_briefs_ready", refId: args.sessionId } as any);
++    await sendMailToUsers(brand.email, `Samaira read ${what}. Your campaigns are one tap away`, html, undefined, { kind: "builder_briefs_ready", refId: args.sessionId } as any);
+   } catch (e: any) { logger.warn({ err: e?.message }, "briefs-ready email failed"); }
+   const phone = (brand as any).phone_e164 ?? (brand as any).phone ?? null;
+   const briefsTpl = await briefsReadyTemplate();
+@@ -59,28 +67,23 @@ export async function notifyBriefsReady(brand: Brand, args: { sessionId: number;
+   }
+ }
+ 
+-/** Day 1, 3, 7 after a brief was built and not posted. In-app + email; WhatsApp only on day 1 (once). */
+-export async function notifyBriefWaiting(brand: Brand, args: { sessionId: number; optionName: string | null; day: 1 | 3 | 7 }): Promise<void> {
++export async function notifyBriefWaiting(brand: Brand, args: { sessionId: number; optionName: string | null; day: 1 | 3 | 7; state?: string; siteDomain?: string | null }): Promise<void> {
+   const link = `${WEB}/brand/build/${args.sessionId}`;
+-  const name = args.optionName ?? "your brief";
+-  const line = args.day === 1
+-    ? `${name} is built and waiting. Open it once and it goes live the same day after approval.`
+-    : args.day === 3
+-      ? `${name} has waited three days. Creators cannot see it until you post it.`
+-      : `${name} has waited a week. Post it, or delete it under Your briefs, and we stop reminding you.`;
++  const w = waitingLine({ state: args.state ?? "built", optionName: args.optionName, siteDomain: args.siteDomain ?? null, day: args.day });
++  const line = w.line;
+   try {
+-    await createNotification({ user_id: brand.id, recipient_role: "brand", type: "builder_brief_waiting", title: "A brief is waiting on you", body: line, ref_id: args.sessionId });
++    await createNotification({ user_id: brand.id, recipient_role: "brand", type: "builder_brief_waiting", title: w.title, body: line, ref_id: args.sessionId });
+   } catch (e: any) { logger.warn({ err: e?.message }, "brief-waiting in-app failed"); }
+   try {
+     const html = emailShell({
+       preheader: line,
+-      heading: "A brief is",
+-      headingEm: "waiting on you.",
+-      body: `<p>${line}</p><p>Everything is filled in: platform, deal, deliverables, creators, dates, the brief, the do's and don'ts. Change anything before it goes.</p>`,
+-      button: { label: "Open the brief", url: link },
++      heading: w.heading,
++      headingEm: w.em,
++      body: `<p>${line}</p><p>${w.detail}</p>`,
++      button: { label: w.button, url: link },
+       footerNote: args.day === 7 ? "This is the last reminder for this brief." : undefined,
+     });
+-    await sendMailToUsers(brand.email, `A brief is waiting on you (day ${args.day})`, html, undefined, { kind: "builder_brief_waiting", refId: args.sessionId } as any);
++    await sendMailToUsers(brand.email, w.title, html, undefined, { kind: "builder_brief_waiting", refId: args.sessionId } as any);
+   } catch (e: any) { logger.warn({ err: e?.message }, "brief-waiting email failed"); }
+   if (args.day === 1) {
+     const phone = (brand as any).phone_e164 ?? (brand as any).phone ?? null;
+@@ -105,20 +108,57 @@ export async function markNudged(sessionId: number, day: number): Promise<void>
+   );
+ }
+ 
+-/** The landing-page door: the lead hears by email that the research card is ready and the campaigns wait behind sign-up. */
+-export async function notifyLeadBriefsReady(email: string, args: { sessionId: number; brandName: string | null; siteDomain: string | null; matchCount: number | null; heroName: string | null }): Promise<void> {
++/** The landing-page door: the lead hears by email that the read is done and the design waits behind sign-up. */
++export async function notifyLeadBriefsReady(email: string, args: { sessionId: number; brandName: string | null; siteDomain: string | null; matchCount: number | null; heroName: string | null; fromText?: boolean }): Promise<void> {
+   // The landing no longer runs research for anonymous visitors (14-Oct), so a lead's card is claimed at sign-up.
+   const link = `${WEB}/brand/signup?builder=${args.sessionId}`;
++  const what = whatWasRead(args.siteDomain, !!args.fromText);
+   try {
+     const html = emailShell({
+-      preheader: "We read your site. Three campaigns are designed and waiting.",
+-      heading: "Your briefs are",
+-      headingEm: "ready.",
+-      body: `<p>We read ${args.siteDomain ?? "your site"}${args.heroName ? ` and designed three campaigns around ${args.heroName}` : " and designed three campaigns"}.${args.matchCount ? ` ${args.matchCount} creators on out of context already match you.` : ""}</p>
+-<p>Sign up as a brand to open them in your profile. Each one is a complete campaign: platform, deal, deliverables, creators, dates, the brief. Pick one, change anything, post it. Your first brief is free.</p>`,
+-      button: { label: "Sign up and open my briefs", url: link },
++      preheader: "Sign up and Samaira designs three full campaigns for you.",
++      heading: "Your campaigns are",
++      headingEm: "one tap away.",
++      body: `<p>Samaira, our AI agent, read ${what}${args.heroName ? ` and found ${args.heroName}` : ""}.${args.matchCount ? ` ${args.matchCount} creators on out of context already match you.` : ""}</p>
++<p>Sign up as a brand to open it. Tap Design and she builds three full campaigns in about two minutes: platform, deal, deliverables, creators, dates, the brief. Your first brief is free.</p>`,
++      button: { label: "Sign up and design", url: link },
+       footerNote: `You asked for this on our site with ${email}. Not you? Ignore this and nothing happens.`,
+     });
+-    await sendMailToUsers(email, "Your briefs are ready", html, undefined, { kind: "builder_lead_briefs_ready", refId: args.sessionId } as any);
++    await sendMailToUsers(email, `Samaira read ${what}`, html, undefined, { kind: "builder_lead_briefs_ready", refId: args.sessionId } as any);
+   } catch (e: any) { logger.warn({ err: e?.message }, "lead briefs-ready email failed"); }
+ }
++
++/** The read failed. The brand hears it once, with the reason shown on the page and a way back. */
++export async function notifyBriefFailed(brand: Brand, args: { sessionId: number; siteDomain: string | null; reason: string }): Promise<void> {
++  const link = `${WEB}/brand/build/${args.sessionId}`;
++  const what = args.siteDomain ?? "your brief";
++  const line = `Samaira could not finish reading ${what}. ${args.reason}`;
++  try {
++    await createNotification({ user_id: brand.id, recipient_role: "brand", type: "builder_read_failed", title: `Samaira could not read ${what}`, body: line, ref_id: args.sessionId });
++  } catch (e: any) { logger.warn({ err: e?.message }, "read-failed in-app failed"); }
++  try {
++    const html = emailShell({
++      preheader: line,
++      heading: "The read did",
++      headingEm: "not finish.",
++      body: `<p>${line}</p><p>Open it to try again, or paste a short brief instead: what you sell, who it is for, and where.</p>`,
++      button: { label: "Try again", url: link },
++      footerNote: `You asked for this on our site with ${brand.email}.`,
++    });
++    await sendMailToUsers(brand.email, `Samaira could not read ${what}`, html, undefined, { kind: "builder_read_failed", refId: args.sessionId } as any);
++  } catch (e: any) { logger.warn({ err: e?.message }, "read-failed email failed"); }
++}
++
++export async function notifyLeadBriefFailed(email: string, args: { siteDomain: string | null; reason: string }): Promise<void> {
++  const what = args.siteDomain ?? "your brief";
++  try {
++    const html = emailShell({
++      preheader: `Samaira could not finish reading ${what}.`,
++      heading: "The read did",
++      headingEm: "not finish.",
++      body: `<p>Samaira could not finish reading ${what}. ${args.reason}</p><p>Try again on our site, or paste a short brief instead: what you sell, who it is for, and where.</p>`,
++      button: { label: "Try again", url: WEB },
++      footerNote: `You asked for this on our site with ${email}. Not you? Ignore this and nothing happens.`,
++    });
++    await sendMailToUsers(email, `Samaira could not read ${what}`, html, undefined, { kind: "builder_lead_read_failed" } as any);
++  } catch (e: any) { logger.warn({ err: e?.message }, "lead read-failed email failed"); }
++}
+diff --git a/src/services/builder/options.ts b/src/services/builder/options.ts
+index 69499ca1..cdfbb78b 100644
+--- a/src/services/builder/options.ts
++++ b/src/services/builder/options.ts
+@@ -261,12 +261,13 @@ function dealFor(klass: BusinessClass, p: BrandProfile, product?: Product | null
+   }
+ }
+ 
+-function deliverablesFor(platform: "Instagram" | "YouTube", shape: "reel_story" | "reel" | "reel_2story" | "story_day" | "short"): Deliverable[] {
++function deliverablesFor(platform: "Instagram" | "YouTube", shape: "reel_story" | "reel" | "reel_2story" | "story_day" | "short" | "stories"): Deliverable[] {
+   if (platform === "YouTube") return [{ type: "YouTube Short", count: 1 }];
+   switch (shape) {
+     case "reel": return [{ type: "Instagram Reel", count: 1 }];
+     case "reel_2story": return [{ type: "Instagram Reel", count: 1 }, { type: "Instagram Story", count: 2 }];
+     case "story_day": return [{ type: "Instagram Story", count: 3 }];
++    case "stories": return [{ type: "Instagram Story", count: 2 }];
+     case "short": return [{ type: "YouTube Short", count: 1 }];
+     default: return [{ type: "Instagram Reel", count: 1 }, { type: "Instagram Story", count: 1 }];
+   }
+@@ -296,7 +297,31 @@ export interface BuildOptionsInput {
+   targetCount?: number | null;
+ }
+ 
+-export interface Picks { objective?: Objective; deal?: "barter" | "paid"; platform?: "Instagram" | "YouTube" }
++export interface Picks {
++  objective?: Objective; deal?: "barter" | "paid"; platform?: "Instagram" | "YouTube";
++  /** "Design again" with the brand's own numbers (3-Nov). Each applies to every card. */
++  count?: number;
++  /** What each creator posts on Instagram. YouTube cards stay one Short. */
++  format?: "reel" | "reel_story" | "reel_2story" | "stories";
++  /** All live by this day (YYYY-MM-DD). */
++  by?: string;
++}
++
++/** Clean the brand's own numbers: whole creators 1-500, a known format, a date from tomorrow to 90 days out. */
++export function cleanOwnNumbers(raw: Record<string, unknown> | null | undefined, now = new Date()): Pick<Picks, "count" | "format" | "by"> {
++  const out: Pick<Picks, "count" | "format" | "by"> = {};
++  const n = Math.floor(Number(raw?.count));
++  if (Number.isFinite(n) && n >= 1 && n <= 500) out.count = n;
++  const f = String(raw?.format ?? "");
++  if (["reel", "reel_story", "reel_2story", "stories"].includes(f)) out.format = f as Picks["format"];
++  const by = String(raw?.by ?? "");
++  if (/^\d{4}-\d{2}-\d{2}$/.test(by)) {
++    const t = Date.parse(`${by}T00:00:00Z`);
++    const today = Date.parse(`${now.toISOString().slice(0, 10)}T00:00:00Z`);
++    if (Number.isFinite(t) && t >= today + DAY && t <= today + 90 * DAY) out.by = by;
++  }
++  return out;
++}
+ 
+ /** One line per answer, so the card can say why the recommended tick is recommended. */
+ export const PICK_WHY: Record<string, string> = {
+@@ -373,7 +398,9 @@ export async function buildCells(input: BuildOptionsInput): Promise<OptionCell[]
+   // plan the brand is on today. A free or Starter brand sees Growth-sized campaigns; paying is
+   // what opens them. If we do not have the creators yet, creator search opens with the plan.
+   let basePlan: PlanKey = TIER_ORDER.indexOf(input.brandPlan) >= TIER_ORDER.indexOf("growth") ? input.brandPlan : "growth";
+-  const target = input.targetCount && input.targetCount > 0 ? Math.floor(input.targetCount) : null;
++  // The brand's own count (Design again) wins over a pitch's named scale.
++  const ownCount = input.picks?.count && input.picks.count > 0 ? Math.floor(input.picks.count) : null;
++  const target = ownCount ?? (input.targetCount && input.targetCount > 0 ? Math.floor(input.targetCount) : null);
+   if (target) {
+     // The default shape is a Reel and a Story: two pieces a creator.
+     for (const plan of TIER_ORDER.slice(TIER_ORDER.indexOf(basePlan))) { basePlan = plan; if (Math.max(1, await livePieces(plan)) >= target * 2) break; }
+@@ -439,6 +466,11 @@ export async function buildCells(input: BuildOptionsInput): Promise<OptionCell[]
+     if (picks.platform) specs[i] = { ...specs[i], platform: picks.platform, shape: picks.platform === "YouTube" ? "short" : specs[i].platform === "YouTube" ? "reel_story" : specs[i].shape };
+   }
+ 
++  // The brand's own format applies to every Instagram card; its date to every card.
++  if (picks.format) for (let i = 0; i < specs.length; i++) if (specs[i].platform === "Instagram" && !specs[i].eventish) specs[i] = { ...specs[i], shape: picks.format };
++  const ownBy = picks.by ?? null;
++  const ownApplyBy = ownBy ? (() => { const a = iso(addDays(new Date(`${ownBy}T00:00:00Z`), -3)); const tomorrow = iso(addDays(now, 1)); return a < tomorrow ? tomorrow : a > applyBy ? applyBy : a; })() : null;
++
+   const cells: OptionCell[] = [];
+   for (let i = 0; i < specs.length; i++) {
+     const s = specs[i];
+@@ -479,9 +511,9 @@ export async function buildCells(input: BuildOptionsInput): Promise<OptionCell[]
+       fulfilment_kind: cellDeal.fulfilment_kind,
+       needs_raw_files: true, usage_rights: "6mo", posts_on_own_social: true,
+       where: cellWhere,
+-      apply_by: applyBy, in_hand: cellInHand,
+-      post_within: cellDeal.fulfilment_kind === "visit" ? "7 days of the visit" : cellDeal.fulfilment_kind === "event" ? "On the day, Stories as it happens" : s.objective === "social_proof" && s.platform === "YouTube" ? "14 days of receiving it, plus 2 days to edit" : "7 days of receiving it",
+-      deadline: s.deadline ?? seasonalDeadline ?? baseDeadline,
++      apply_by: ownApplyBy ?? applyBy, in_hand: cellInHand,
++      post_within: ownBy ? `by ${ownBy}, the date you set` : cellDeal.fulfilment_kind === "visit" ? "7 days of the visit" : cellDeal.fulfilment_kind === "event" ? "On the day, Stories as it happens" : s.objective === "social_proof" && s.platform === "YouTube" ? "14 days of receiving it, plus 2 days to edit" : "7 days of receiving it",
++      deadline: ownBy ?? s.deadline ?? seasonalDeadline ?? baseDeadline,
+       event_date: eventDate,
+       seasonal: s.seasonal ?? null,
+       cta_link: sales ? (prod?.url ?? null) : null,
+diff --git a/src/services/builder/session.ts b/src/services/builder/session.ts
+index 6ba83e90..e0c9c7df 100644
+--- a/src/services/builder/session.ts
++++ b/src/services/builder/session.ts
+@@ -14,6 +14,8 @@
+  * research queue of three. Budget is alerts only (utils/aiUsage).
+  */
+ import { returnedRows } from "../../utils/dbResult";
++import { webAddressIn, designRuns, DESIGN_RUNS_PER_SESSION } from "./rules";
++export { webAddressIn, designRuns, DESIGN_RUNS_PER_SESSION };
+ import { createHash } from "crypto";
+ import { CreateDBConnection } from "../../db/create-connection";
+ import { CampaignBuilderSession } from "../../entity/CampaignBuilderSession";
+@@ -29,7 +31,7 @@ import { createCampaign } from "../campaigns/createCampaign";
+ import { BUILDER_SESSIONS_PER_BRAND_PER_DAY, BUILDER_RUNS_PER_IP_PER_DAY, BUILDER_RUNS_PER_DOMAIN_PER_WEEK, BUILDER_RESEARCH_CONCURRENCY } from "../../config/builderFlags";
+ import { logSystemAction } from "../../utils/auditLog";
+ import logger from "../../utils/logger";
+-import { notifyBriefsReady, notifyLeadBriefsReady } from "./notify";
++import { notifyBriefsReady, notifyLeadBriefsReady, notifyBriefFailed, notifyLeadBriefFailed } from "./notify";
+ import { builderModelIsMeta } from "./modelPath";
+ import { fillStoryboards } from "./storyboard";
+ import type { BrandProfile } from "../../ai/prompts/research";
+@@ -82,8 +84,10 @@ export interface StartArgs {
+ 
+ /** Create the row, enforce the caps, kick research. */
+ export async function startSession(a: StartArgs): Promise<CampaignBuilderSession> {
+-  const website = String(a.website ?? "").trim() || null;
+   const text = String(a.text ?? "").trim() || null;
++  // A brief that names the brand's site gets the site read too (audit 3-Nov: Qaffeine's
++  // brief had no prices, photos or country because the address inside it was ignored).
++  const website = String(a.website ?? "").trim() || (text ? webAddressIn(text) : null);
+   if (!website && !text) throw new BuilderError(400, "no_input", "Paste a website or tell us what you want.");
+   const domain = website ? siteDomain(website) : null;
+   if (website && !domain) throw new BuilderError(400, "invalid_url", readProblemSentence("invalid_url"));
+@@ -125,6 +129,25 @@ const fail = async (s: CampaignBuilderSession, step: string, kind: string, messa
+   const shown = ours ? "Something on our side stopped the read. Try again in a little while; we have been told." : message;
+   await save(s, { state: "ai_failed", error: { step, kind, message: shown, at: new Date().toISOString() } });
+   logSystemAction({ via: "builder", action: "builder_failed", resource_type: "builder_session", resource_id: s.id, detail: { step, kind, message } });
++  await tellAdminIfOurs(s, step, kind, message);
++  // The brand who left the page hears that the read failed (audit 3-Nov: a failed read sent nothing).
++  if (step === "research") await notifyReadFailed(s, shown).catch((e) => logger.warn({ id: s.id, err: e?.message }, "read-failed notice failed"));
++};
++
++async function notifyReadFailed(s: CampaignBuilderSession, shown: string): Promise<void> {
++  if (s.pitch) return;
++  const domain = s.site_domain ?? null;
++  if (s.brand_id) {
++    const brand = await brandRepo().findOne({ where: { id: s.brand_id } });
++    if (brand && !brand.is_demo) await notifyBriefFailed(brand, { sessionId: s.id, siteDomain: domain, reason: shown });
++  } else if (s.lead_id) {
++    const [lead] = await CreateDBConnection.query(`SELECT email FROM brand_signup_lead WHERE id = $1::int`, [s.lead_id]);
++    if (lead?.email) await notifyLeadBriefFailed(String(lead.email), { siteDomain: domain, reason: shown });
++  }
++}
++
++async function tellAdminIfOurs(s: CampaignBuilderSession, step: string, kind: string, message: string): Promise<void> {
++  const ours = kind === "billing" || kind === "api" || kind === "disabled";
+   if (ours) {
+     try {
+       const [recent] = await CreateDBConnection.query(`SELECT 1 FROM notification WHERE recipient_role = 'admin' AND type = 'builder_down' AND created_at >= NOW() - INTERVAL '1 hour' LIMIT 1`);
+@@ -190,10 +213,10 @@ export async function runResearch(id: number): Promise<CampaignBuilderSession |
+     const matchCount = await (async () => { try { const { matchCreators } = await import("./supply"); return (await matchCreators({ categories: proposed, platform: "Instagram", tier: "nano", country: got.country, cities: (await import("./options")).operatingCities(got), brandId: brand?.id ?? null, demo: !!brand?.is_demo }, 0)).total; } catch { return null; } })();
+     const recommended = await (async () => { try { const { recommendedPicks } = await import("./options"); return await recommendedPicks({ profile: got, brandPlan: planKeyFor(brand), brandId: brand?.id ?? null, demo: !!brand?.is_demo, references: null, pastedText: (s.input as any)?.text ?? null }); } catch { return null; } })();
+     await save(s, { tweaks: { ...(s.tweaks ?? {}), creator_categories: proposed, match_count: matchCount, recommended } as any });
+-    if (brand && !brand.is_demo) await notifyBriefsReady(brand, { sessionId: s.id, matchCount, heroName: hero, siteDomain: r.domain });
++    if (brand && !brand.is_demo) await notifyBriefsReady(brand, { sessionId: s.id, matchCount, heroName: hero, siteDomain: r.domain, fromText: !!(s.input as any)?.text });
+     else if (!brand && s.lead_id) {
+       const [lead] = await CreateDBConnection.query(`SELECT email, brand_name FROM brand_signup_lead WHERE id = $1::int`, [s.lead_id]);
+-      if (lead?.email) await notifyLeadBriefsReady(String(lead.email), { sessionId: s.id, brandName: lead.brand_name ?? null, siteDomain: r.domain, matchCount, heroName: hero });
++      if (lead?.email) await notifyLeadBriefsReady(String(lead.email), { sessionId: s.id, brandName: lead.brand_name ?? null, siteDomain: r.domain, matchCount, heroName: hero, fromText: !!(s.input as any)?.text });
+     }
+     return s;
+   } catch (e: any) {
+@@ -212,6 +235,7 @@ export async function runOptions(id: number, categories?: string[], picks?: impo
+   if (!s.profile) throw new BuilderError(409, "no_profile", "Nothing was read yet.");
+   // One paid design run at a time per session. A reload or a second tap while the
+   // first run is working gets "designing" back instead of starting another run.
++  if (designRuns(s.tweaks, Array.isArray(s.options) && s.options.length > 0) >= DESIGN_RUNS_PER_SESSION) throw new BuilderError(429, "design_cap", "That is three designs for this brief. Choose one and change it in Edit, or start a new brief from Home.");
+   if (!(await claimDesign(s.id))) throw new BuilderError(409, "designing", "Samaira is still designing these. They will appear here when they are ready.");
+   try {
+     return await designNow(s, categories, picks);
+@@ -258,12 +282,24 @@ async function designNow(s: CampaignBuilderSession, categories?: string[], picks
+     picks: picks ?? (s.tweaks as any)?.picks ?? undefined,
+     targetCount: (s.tweaks as any)?.target_count ?? null,
+   });
+-  if (!r.ok) { await fail(s, "options", r.failure?.kind ?? "unknown", r.failure?.message ?? "Options failed."); throw new BuilderError(502, "ai_failed", "We could not design the options. Try again in a minute."); }
++  if (!r.ok) {
++    // A failed design never breaks the session (audit 3-Nov: it went to ai_failed and
++    // "Try again" re-ran the research). The brand keeps its picks, or its old
++    // campaigns on a redesign, and can press Design again.
++    const kind = r.failure?.kind ?? "unknown";
++    const message = r.failure?.message ?? "Options failed.";
++    logSystemAction({ via: "builder", action: "builder_failed", resource_type: "builder_session", resource_id: s.id, detail: { step: "options", kind, message, kept_state: s.state } });
++    await tellAdminIfOurs(s, "options", kind, message);
++    throw new BuilderError(502, "ai_failed", "I could not design these just now. Try again in a minute; nothing was lost.");
++  }
+   const cats = categories?.length ? categories : r.creator_categories;
+   const cards = r.cards.map((c) => ({ ...c, categories: cats }));
++  const hadOptions = Array.isArray(s.options) && s.options.length > 0;
++  // A redesign replaces the campaigns, so any chosen card and its built brief go with them.
++  const { body: _b, needs_input: _n, problems: _p, built_at: _a, tweaks: _t, ...keep } = (s.tweaks ?? {}) as any;
+   await save(s, {
+-    state: "options", options: cards as any,
+-    tweaks: { ...(s.tweaks ?? {}), creator_categories: cats, picks: picks ?? (s.tweaks as any)?.picks ?? null, admin_flags: r.admin_flags, season_note: r.season_note, review_fixes: r.review_fixes ?? [] } as any,
++    state: "options", options: cards as any, chosen_index: null, brief_opened_at: null,
++    tweaks: { ...keep, creator_categories: cats, picks: picks ?? (s.tweaks as any)?.picks ?? null, admin_flags: r.admin_flags, season_note: r.season_note, review_fixes: r.review_fixes ?? [], design_runs: designRuns(s.tweaks, hadOptions) + 1 } as any,
+     cost_usd: String((Number(s.cost_usd) || 0) + r.costUsd), prompt_version: r.promptVersion, model: r.model,
+   });
+   logSystemAction({ via: "builder", action: "builder_options", resource_type: "builder_session", resource_id: s.id, detail: { cost: r.costUsd, flags: r.admin_flags, cards: cards.length, review_fixes: (r.review_fixes ?? []).length } });
