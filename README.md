@@ -27,8 +27,15 @@ Every commit below is in this repo's history (`git log`):
 | 29-Oct | `94dbbda` | Review fixes 3+8: per-call Meta budget, web-search cost |
 | 30-Oct | `5a444b7` | Flagged reels are never positive evidence (withheld from prompt, flags stay) |
 | 1-Nov | `76d17a9` | Step 8: strict must-say quotes in the open lane + synth baseline script |
+| 2-Nov | `546f0e5` | Builder: 150 s Muse budget before Claude fallback — API PR #479 |
+| 2-Nov | `bd6a0d8` | Meta client: read last message, not first — API PR #480 |
+| 3-Nov | `f1f1673` | Builder: one design run at a time, reload-safe — API PR #485 |
+| 3-Nov | `8ea3419` | Builder: design again with own numbers, honest notices — API PR #486 |
+| 3-Nov | `2df849e` | Draft check: 500 MB cap, ffmpeg 480 s, don'ts scored, product-name fallback — API PR #487 |
+| 3-Nov | `05faf2e` | Admin: re-run AI draft check on a piece already with the brand — API PR #488 |
+| 3-Nov | `a0406be` | AI check card in chat — Web PR #150, App PR #65 |
 
-On top of that, the production Meta-model code written in the same window was copied here verbatim (see "Live code, wired into OOCM"): `src/meta/` (draftCheckQueue, creatorFitRunner, liveCheck, oneScore, pulseReels, safetyFlags), `src/discover/creatorsForYou.ts`, `src/agent/campaignAgent.ts`, `scripts/agent-replay.ts`.
+On top of that, the production Meta-model code written in the same window was copied here verbatim (see "Live code, wired into OOCM"): `src/meta/` (draftCheckQueue, creatorFitRunner, liveCheck, oneScore, pulseReels, safetyFlags), `src/discover/creatorsForYou.ts`, `src/agent/campaignAgent.ts` (`scripts/agent-replay.ts` is also production code but was not recopied in this round — unchanged since 1-Nov).
 
 ## Meta models and their real job
 
@@ -68,7 +75,7 @@ Merge state is from `origin/main` of the OOCM API repo; gating is from the code 
 - **Live check** — merged 28-Oct. Behind `META_LIVE_CHECK_ENABLED`.
 - **Creators-for-you** — merged 30-Oct. Behind `META_CREATORS_FOR_YOU_ENABLED`.
 - **One score / safety flags / pulse reels** — merged 31-Oct–1-Nov, behind their flags.
-- **Campaign agent + replay harness** — written 1-Nov on an unmerged feature branch. Not live; evaluated here by replay only.
+- **Campaign agent** — merged to `origin/main` (API PR #469). Advice only to admin — never sends on its own. On the strict replay test it scored 3 of 8. Evaluated here under `eval/agent/`.
 
 ## Eval results, as they are
 
@@ -105,6 +112,14 @@ OPEN_API_KEY=... node scripts/open-eval.ts test-reels/tagged/results-v2.json cli
 
 `test-reels/tagged/*.json` are the API-lane results the open lane is judged against (filenames scrubbed to `creator-N…mp4`; videos not included). `synthetic/*.json` are API baselines for the three synthetic clips. The `src/meta/*Queue|Runner|liveCheck|oneScore|pulseReels|safetyFlags`, `src/discover/`, `src/agent/`, and `scripts/agent-replay.ts` files are live production code and do not run here.
 
-## Live numbers: filled at submission
+## Live numbers
 
-(empty — filled when this is submitted)
+The first real creator draft checked on the live server was on 3-Nov — a 63-second, 190 MB reel from a creator (read from `~/OOCM-hackathon/result799-prod.json`, AI check on piece 799 on 3-Nov-2026). Muse Spark 1.3, Voice Transcribe and SAM ran 9 checks (product on screen, must-say line, must-show app, disclosure, competitors, other brands, three don'ts); all 9 passed.
+
+The OOCM app was on screen for 35.3 seconds of the 63.3-second video from 0:07, tracked by SAM; the brief line "OOCM, the new social media where you get paid" was heard at 0:15 (verified by transcript + Spark); #ad disclosure was in the video and the caption; all three don'ts passed. Total check time about 4.5 minutes, cost $0.37.
+
+Separately, campaign 3457 was built by Muse Spark 1.3 end to end, at a cost of $0.42.
+
+## Who wrote what
+
+All application code in this repo was written by Claude Code running on Meta's Muse models — Spark 1.3 on the Meta API and Spark Open on Fireworks — and reviewed by Claude.
