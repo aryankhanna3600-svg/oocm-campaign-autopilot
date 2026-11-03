@@ -1,3 +1,4 @@
+// Mirrored from the public hackathon repo (oocm-campaign-autopilot, src/meta/client.ts). Edit there first.
 /**
  * Meta Model API client: the four calls the draft checker needs.
  *
@@ -39,7 +40,9 @@ export interface MetaUsage {
   output_tokens?: number;
   total_tokens?: number;
   video_frames_processed?: number;
-  /** Web-search tool calls on the response, when the API reports them. */
+  /** Web-search tool calls on the response, counted from web_search_call
+   * output items (1-Nov probe: usage never carries web_search_calls, even
+   * on calls that searched). */
   web_search_calls?: number;
 }
 
@@ -51,10 +54,16 @@ function key(): string {
 
 const RETRYABLE = new Set([429, 500, 503]);
 
-async function call(path: string, init: RequestInit, timeoutMs = 180_000): Promise<Response> {
+async function call(path: string, init: RequestInit, timeoutMs = 180_000, outer?: AbortSignal): Promise<Response> {
   let wait = 800;
   for (let attempt = 0; ; attempt++) {
+    // An aborted caller never starts another attempt — the audit already moved
+    // on (Haiku fallback), so a retry would be pure spend.
+    outer?.throwIfAborted();
     const ctl = new AbortController();
+    const onOuter = () => ctl.abort();
+    if (outer && !outer.aborted) outer.addEventListener("abort", onOuter, { once: true });
+    else if (outer) ctl.abort();
     const timer = setTimeout(() => ctl.abort(), timeoutMs);
     let res: Response;
     try {
@@ -65,14 +74,38 @@ async function call(path: string, init: RequestInit, timeoutMs = 180_000): Promi
       });
     } finally {
       clearTimeout(timer);
+      outer?.removeEventListener("abort", onOuter);
     }
     if (res.ok) return res;
     const body = await res.text();
-    if (!RETRYABLE.has(res.status) || attempt >= 3) throw new MetaApiError(res.status, body);
+    if (!RETRYABLE.has(res.status) || attempt >= 3 || outer?.aborted) {
+      if (outer?.aborted) outer.throwIfAborted();
+      throw new MetaApiError(res.status, body);
+    }
     const after = Number(res.headers.get("retry-after"));
-    await new Promise((r) => setTimeout(r, Number.isFinite(after) && after > 0 ? after * 1000 : wait + Math.random() * 400));
+    const delay = Number.isFinite(after) && after > 0 ? after * 1000 : wait + Math.random() * 400;
+    await sleepOrAbort(delay, outer);
     wait *= 2;
   }
+}
+
+/** Backoff sleep that wakes early when the caller aborts — no sleeping into a retry nobody wants. */
+function sleepOrAbort(ms: number, outer?: AbortSignal): Promise<void> {
+  if (!outer || outer.aborted) {
+    outer?.throwIfAborted();
+    return Promise.resolve();
+  }
+  return new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      outer.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject((outer as AbortSignal).reason ?? new DOMException("Aborted", "AbortError"));
+    };
+    outer.addEventListener("abort", onAbort, { once: true });
+  });
 }
 
 // ── Muse Spark (Responses API) ─────────────────────────────────────────────
@@ -90,6 +123,8 @@ export interface RespondArgs {
   schema: { name: string; schema: Record<string, unknown> };
   maxOutputTokens?: number;
   effort?: "minimal" | "low" | "medium" | "high";
+  /** Caller abort (the 25s Spark race): aborts the fetch, never retried. */
+  signal?: AbortSignal;
   /** Structured-output strictness. strict:false + local parse is the retry lane. */
   strict?: boolean;
   /** Responses API tools, e.g. [{type:"web_search"}] ($2.50/1k queries). */
@@ -118,7 +153,9 @@ export async function respond<T>(a: RespondArgs): Promise<RespondResult<T>> {
       text: { format: { type: "json_schema", name: a.schema.name, schema: a.schema.schema, strict: a.strict ?? true } },
       store: false,
     }),
-  }, a.timeoutMs ?? 180_000);
+    // Second review 31-Oct: the caller's abort (the 25s Spark race) reaches
+    // fetch — the timed-out call stops, it doesn't bill behind our back.
+  }, a.timeoutMs ?? 180_000, a.signal);
   const json: any = await res.json();
   if (json.status === "incomplete") {
     const reason = String(json.incomplete_details?.reason ?? "unknown");
@@ -127,13 +164,17 @@ export async function respond<T>(a: RespondArgs): Promise<RespondResult<T>> {
   if (json.status && json.status !== "completed") {
     throw new MetaApiError(200, `response ${json.status}: ${JSON.stringify(json.incomplete_details ?? json.error ?? {})}`);
   }
-  // Reasoning items can come first: find the message, then its output_text.
-  const msg = (json.output ?? []).find((o: any) => o.type === "message");
+  // Reasoning items can come first, and a search run writes progress notes
+  // ("I'll search...") between its calls: the answer is the last message.
+  const msg = (json.output ?? []).filter((o: any) => o.type === "message").at(-1);
   const refusal = msg?.content?.find((c: any) => c.type === "refusal");
   if (refusal) throw new MetaApiError(200, `refusal: ${refusal.refusal ?? ""}`);
   const text = (msg?.content ?? []).filter((c: any) => c.type === "output_text").map((c: any) => c.text).join("");
   if (!text) throw new MetaApiError(200, "empty output_text");
-  return { data: JSON.parse(text) as T, model: json.model, usage: json.usage ?? {}, responseId: json.id };
+  // usage never reports searches (probed 1-Nov: two web_search_call items,
+  // no web_search_calls in usage) — count the items so search spend is logged.
+  const searchCalls = (json.output ?? []).filter((o: any) => o?.type === "web_search_call").length;
+  return { data: JSON.parse(text) as T, model: json.model, usage: { ...(json.usage ?? {}), ...(searchCalls ? { web_search_calls: searchCalls } : {}) }, responseId: json.id };
 }
 
 // ── Files ──────────────────────────────────────────────────────────────────
@@ -236,3 +277,15 @@ export async function segment(video: { file_id?: string; video_url?: string }, p
   const text = (msg?.content ?? []).filter((c: any) => c.type === "output_text").map((c: any) => c.text).join("");
   return { boxes: parseSam(text), usage: json.usage ?? {} };
 }
+
+export const isMetaOutage = (e: unknown): boolean => {
+  if (!(e instanceof MetaApiError)) return false;
+  const re = /credit|billing|insufficient|quota/i;
+  const msg = (e as any).message ?? "";
+  const body = (e as any).body ?? "";
+  if (re.test(msg) || re.test(body)) return true;
+  const status = (e as any).status as number;
+  if (status === 401 || status === 402 || status === 403 || status === 429) return true;
+  if (typeof status === "number" && status >= 500 && status <= 599) return true;
+  return false;
+};
