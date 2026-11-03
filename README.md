@@ -114,7 +114,7 @@ OPEN_API_KEY=... node scripts/open-eval.ts test-reels/tagged/results-v2.json cli
 
 ## Live numbers
 
-The first real creator draft checked on the live server was on 3-Nov — a 63-second, 190 MB reel from a creator (read from `~/OOCM-hackathon/result799-prod.json`, AI check on piece 799 on 3-Nov-2026). Muse Spark 1.3, Voice Transcribe and SAM ran 9 checks (product on screen, must-say line, must-show app, disclosure, competitors, other brands, three don'ts); all 9 passed.
+The first real creator draft checked on the live server was on 3-Nov — a 63-second, 190 MB reel from a creator. Muse Spark 1.3, Voice Transcribe and SAM ran 9 checks (product on screen, must-say line, must-show app, disclosure, competitors, other brands, three don'ts); all 9 passed.
 
 The OOCM app was on screen for 35.3 seconds of the 63.3-second video from 0:07, tracked by SAM; the brief line "OOCM, the new social media where you get paid" was heard at 0:15 (verified by transcript + Spark); #ad disclosure was in the video and the caption; all three don'ts passed. Total check time about 4.5 minutes, cost $0.37.
 
