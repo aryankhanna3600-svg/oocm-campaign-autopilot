@@ -128,7 +128,7 @@ Separately, campaign 3457 was built by Muse Spark 1.3 end to end, at a cost of $
 
 ## Who wrote what
 
-All application code in this repo was written by Claude Code running on Meta's Muse models — Spark 1.3 on the Meta API and Spark Open on Fireworks — and reviewed by Claude.
+The code was written with Claude Code, by one founder working with AI. From 31-Oct, Claude Code ran on Meta's Muse models for the main builds (Spark 1.3 on the Meta API, Spark Open on Fireworks): Door 1 (creator-first draft check), the campaign agent, and the AI check card in the chat on web and app. The first draft checker and creator fit (27-28 Oct), the builder fixes (2-3 Nov), the admin re-check and all review fixes were written by Claude Opus. Every model the product calls at runtime is a Meta model (see Runtime models).
 
 ## Built before the event, not part of this submission
 The builder's core files (`options.ts`, `session.ts`, `notify.ts`) were written on 14-Oct, before the hackathon. They are not in this repo. The hackathon changes to them are in `patches/` as plain diffs, so only the new work is shown.
