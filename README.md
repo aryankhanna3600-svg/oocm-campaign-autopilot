@@ -41,7 +41,7 @@ On top of that, the production Meta-model code written in the same window was co
 
 Every model this project calls at runtime is a Meta model: Muse Spark 1.3, Muse Voice Transcribe 1.0 and SAM 3.1 on the Meta Model API, Muse Image for the storyboard, and Muse Spark Open on Fireworks for the open-weight lane.
 
-One disclosed exception: `src/builder/modelPath.ts` is the switch that moves OOCM's pre-existing campaign builder onto Muse. If a Muse call fails, or the monthly Meta budget cap is reached, that one call falls back to OOCM's older builder model, and the fallback is logged. The demo campaign (3457, builder session 178) ran on Muse Spark 1.3 at every step, with no fallback.
+One disclosed exception: `src/builder/modelPath.ts` is the switch that moves OOCM's pre-existing campaign builder onto Muse. If a Muse call fails, or the monthly Meta budget cap is reached, that one call falls back to OOCM's older builder model, and the fallback is logged. The demo campaign (3457, builder session 178) ran on Muse Spark 1.3 at every step, with no fallback. Since 4-Nov the live builder on outofcontextmarketing.com runs on Muse for every brand (checked the same day: a fresh build ran research, options, review on Muse Spark 1.3 and the storyboard on Muse Image, with no fallback in the logs).
 
 ## Meta models and their real job
 
