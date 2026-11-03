@@ -45,6 +45,7 @@ import { Readable, Transform } from "stream";
 import { pipeline } from "stream/promises";
 import { CreateDBConnection } from "../../db/create-connection";
 import { returnedRows } from "../../utils/dbResult";
+import { MAX_DRAFT_BYTES } from "../pieceUpload";
 import { isMarker, parseMarker, signMarker } from "../../utils/privateFiles";
 import { recomputeMirrors } from "../deliverables.service";
 import logger from "../../utils/logger";
@@ -91,7 +92,7 @@ export async function creatorCheckFor(campaignId: number): Promise<boolean> {
 }
 
 // Stays under the $150 Meta hackathon credits by default.
-const monthlyBudgetUsd = (): number => {
+export const monthlyBudgetUsd = (): number => {
   const n = Number(process.env.META_BUDGET_USD_MONTH);
   return Number.isFinite(n) && n >= 0 ? n : 100;
 };
@@ -99,27 +100,9 @@ const monthlyBudgetUsd = (): number => {
 const MAX_ATTEMPTS = 3;
 const WORKER_ID = `${os.hostname()}:${process.pid}`;
 
-// Published Meta Model API prices (meta-api-notes, Oct 2026).
-const PRICE = { sparkIn: 1.25 / 1e6, sparkOut: 4.25 / 1e6, samFrame: 0.2 / 1000, audioHour: 0.18 };
-
-// ── Spend ────────────────────────────────────────────────────────────────────
-
-export async function metaSpendThisMonth(): Promise<number> {
-  const rows = returnedRows<{ usd: string }>(await CreateDBConnection.query(
-    `SELECT COALESCE(SUM(cost_usd), 0) AS usd FROM meta_usage_log WHERE created_at >= date_trunc('month', NOW())`,
-  ));
-  return Number(rows[0]?.usd ?? 0);
-}
-
-export async function logUsage(feature: string, model: string, units: Record<string, number>, costUsd: number, refId: number | null) {
-  await CreateDBConnection.query(
-    `INSERT INTO meta_usage_log (feature, model, units, cost_usd, ref_id) VALUES ($1::varchar, $2::varchar, $3::jsonb, $4::numeric, $5::int)`,
-    [feature, model, JSON.stringify(units), costUsd.toFixed(6), refId],
-  ).catch((e: any) => logger.warn(`meta_usage_log insert failed: ${e?.message}`));
-}
-
-export const tokenCost = (u: { input_tokens?: number; output_tokens?: number }) =>
-  (u.input_tokens ?? 0) * PRICE.sparkIn + (u.output_tokens ?? 0) * PRICE.sparkOut;
+// Spend fns live in ./usage so the builder path can log without this module's chain.
+export { metaSpendThisMonth, logUsage, tokenCost } from "./usage";
+import { logUsage, metaSpendThisMonth, tokenCost, samCost, audioCost } from "./usage";
 
 // ── Brief ────────────────────────────────────────────────────────────────────
 
@@ -209,9 +192,12 @@ async function assertPublicHttps(u: URL): Promise<void> {
   if (!ips.length || ips.some(isPrivateAddress)) throw new Unsupported("The draft link doesn't point to a public website.");
 }
 
-const maxBytes = (): number => {
+/** Draft downloads stop here. Uploads allow MAX_DRAFT_BYTES (pieceUpload), so the
+ * check reads the same limit — a draft the creator could send is a draft the
+ * check can open. META_DRAFT_MAX_MB still overrides, in MB. */
+export const maxBytes = (): number => {
   const mb = Number(process.env.META_DRAFT_MAX_MB);
-  return (Number.isFinite(mb) && mb > 0 ? mb : 150) * 1024 * 1024;
+  return (Number.isFinite(mb) && mb > 0 ? mb : MAX_DRAFT_BYTES / (1024 * 1024)) * 1024 * 1024;
 };
 
 /**
@@ -436,7 +422,7 @@ async function notifyCheckReady(pieceId: number): Promise<void> {
 }
 
 export function costOf(r: DraftCheckResult): number {
-  return tokenCost(r.usage.spark) + r.usage.samFrames * PRICE.samFrame + (r.usage.audioSeconds / 3600) * PRICE.audioHour;
+  return tokenCost(r.usage.spark) + samCost(r.usage.samFrames) + audioCost(r.usage.audioSeconds);
 }
 
 // ── promoteToBrand: the SINGLE door to the brand (Door 1) ───────────────────
@@ -510,7 +496,7 @@ export async function abandonChecking(pieceId: number, version: number, reason: 
       WHERE id = $1::int AND version = $2::int AND draft_status = 'checking'
       RETURNING application_id,
               (SELECT creator_id FROM campaign_application WHERE id = application_deliverable.application_id) AS creator_id`,
-    [pieceId, version, JSON.stringify({ abandoned_at: new Date().toISOString(), abandoned_reason: reason })],
+    [pieceId, version, JSON.stringify({ abandoned_at: new Date().toISOString(), abandoned_reason: reason, abandoned_by: "system" })],
   ));
   const r = rows[0];
   if (!r) {
@@ -636,9 +622,8 @@ export async function promoteToBrand(pieceId: number, version: number, by: Promo
  *
  * M4: the card's video comes from meta.file, not meta.link — so the file
  * object is re-derived from the stored draft_file marker (extension → mime /
- * kind, size unknown without an S3 round-trip and reported as 0). A marker
- * must never land in meta.link either: it is not openable, so when draft_url
- * IS the marker the link is nulled. M3: content_submitted is CAMPAIGN_SCOPED —
+ * kind, size from S3). A marker must never land in meta.link either: it is
+ * not openable, so when draft_url IS the marker the link is nulled. M3: content_submitted is CAMPAIGN_SCOPED —
  * ref_id is the campaign id, or the brand's tap lands on campaign
  * #<applicationId>.
  */
@@ -664,7 +649,7 @@ async function sendBrandSurface(appId: number, pieceId: number): Promise<void> {
   const durationSec = Number((piece as any)?.ai_check_result?.duration_s);
   await onDraftSent({
     app, piece, pieces, creatorId: Number(app.creator?.id ?? app.creator_id),
-    file: fileFromMarker(piece.draft_file),
+    file: await fileFromMarkerWithSize(piece.draft_file),
     link: isMarker(piece.draft_url) ? null : (piece.draft_url ?? null),
     caption: piece.draft_notes ?? null, whatFixed: piece.draft_notes ?? null,
     durationSec: Number.isFinite(durationSec) ? durationSec : null,
@@ -705,13 +690,110 @@ export function slimPiecesForCreator(pieces: any[]): any[] {
   });
 }
 
+// ── ai_check on the chat's draft card (3-Nov-2026) ───────────────────────────
+//
+// The brand used to see the check result only on the campaign page; the chat
+// card — where they actually decide — showed nothing. getMessages now reads
+// the piece by deliverable_id and attaches this object on every kind='draft'
+// message. Brand and creator see the SAME object.
+//
+// Version rule: a recorded outcome (done/failed/unsupported) belongs to exactly
+// one draft version, so it is returned ONLY when ai_check_version equals that
+// message's draft version (meta.version) — an old check never shows on a new
+// version. The one exception is a version with NO outcome yet on a fresh draft
+// (ai_check_version NULL, submitted within the claim window): nothing stale can
+// show, and the check really is queued, so it reads `running`.
+//
+// Leak rule (same as the Door 1 brand-leak sanitize): the brand gets verdicts,
+// never raw errors, abandon reasons or brand-blocked/banned copy. The `done`
+// object is pick-keep; `why` is one of three fixed plain-words strings.
+
+export interface ChatAiCheckItem {
+  key: string | null;
+  label: string | null;
+  verdict: string | null;
+  detail: string | null;
+  at_s: number | null;
+  quote: string | null;
+}
+
+export interface ChatAiCheck {
+  state: "running" | "done" | "unchecked";
+  checked_at?: string | null;
+  summary?: string | null;
+  items?: ChatAiCheckItem[];
+  report?: {
+    duration_s: number | null;
+    product_s: number | null;
+    product_share: number | null;
+    brand_first_s: number | null;
+    brand_how: string | null;
+    disclosed: boolean | null;
+    disclosure_how: string[] | null;
+  } | null;
+  transcript?: string | null;
+  why?: string;
+}
+
+/** Plain words for people — the only strings that ever reach the brand here. */
+function chatUncheckedWhy(piece: any): string {
+  const err = String(piece?.ai_check_error ?? "");
+  if (/over\s+\d+\s*MB|too big/i.test(err)) return "the video was too big for our check";
+  if (piece?.ai_check_status === "unsupported") return "the check couldn't open the video";
+  if (piece?.ai_check_status === "failed") return "the check didn't finish";
+  return "sent before our check finished";
+}
+
+export function chatAiCheck(piece: any, draftVersion: number | null | undefined): ChatAiCheck | undefined {
+  if (!piece || typeof piece !== "object") return undefined;
+  if (draftVersion == null) return undefined;
+  const recorded = piece.ai_check_version;
+  if (recorded != null && Number(recorded) !== Number(draftVersion)) return undefined;
+  if (piece.ai_check_status == null && piece.ai_check_version == null && piece.draft_status !== "checking") return undefined;
+  const r = piece.ai_check_result;
+  const result = r && typeof r === "object" ? r : null;
+  if (piece.ai_check_status === "done" && result && (result as any).checked_at) {
+    const rep = (result as any).report;
+    return {
+      state: "done",
+      checked_at: (result as any).checked_at ?? null,
+      summary: (result as any).summary ?? null,
+      items: Array.isArray((result as any).items)
+        ? (result as any).items.map((it: any) => ({
+          key: it?.key ?? null,
+          label: it?.label ?? null,
+          verdict: it?.verdict ?? null,
+          detail: it?.detail ?? null,
+          at_s: it?.at_s ?? null,
+          quote: it?.quote ?? null,
+        }))
+        : [],
+      report: rep && typeof rep === "object"
+        ? {
+          duration_s: rep.duration_s ?? null,
+          product_s: rep.product_s ?? null,
+          product_share: rep.product_share ?? null,
+          brand_first_s: rep.brand_first_s ?? null,
+          brand_how: rep.brand_how ?? null,
+          disclosed: rep.disclosed ?? null,
+          disclosure_how: rep.disclosure_how ?? null,
+        }
+        : null,
+      transcript: (result as any).transcript ?? null,
+    };
+  }
+  if (piece.ai_check_status === "running" || piece.ai_check_status === "queued" || piece.draft_status === "checking") return { state: "running" };
+  if (piece.ai_check_status === "unsupported" || piece.ai_check_status === "failed") return { state: "unchecked", why: chatUncheckedWhy(piece) };
+  return undefined;
+}
+
 /**
- * Review M4: re-derive onDraftSent's file object from a stored marker without
- * an S3 round-trip (the promote path stays local and fast). Extension → mime,
- * exactly the set presignUpload writes; size is unknowable here and reads 0 —
- * the card player needs marker + mime + kind, and retention cleanup
- * (chat-review-sweeps reads meta.file) needs the marker. Null when the draft
- * is a link, not an upload.
+ * Review M4: re-derive onDraftSent's file object from a stored marker. Extension
+ * → mime, exactly the set presignUpload writes. Size comes from S3 (a chat
+ * card stamped size 0 for a 190 MB upload hid the real file from the brand);
+ * when the lookup fails it reads 0 — the card player needs marker + mime +
+ * kind, and retention cleanup (chat-review-sweeps reads meta.file) needs the
+ * marker. Null when the draft is a link, not an upload.
  */
 const MARKER_MIME: Record<string, string> = {
   mp4: "video/mp4", mov: "video/quicktime", m4v: "video/x-m4v", webm: "video/webm", "3gp": "video/3gpp",
@@ -725,6 +807,15 @@ export function fileFromMarker(marker: string | null): { marker: string; size: n
   const mime = MARKER_MIME[ext];
   if (!mime) return null;
   return { marker: marker as string, size: 0, mime, kind: mime.startsWith("video/") ? "video" : "image" };
+}
+
+/** fileFromMarker plus the stored size (0 when S3 can't be reached). */
+export async function fileFromMarkerWithSize(marker: string | null): Promise<{ marker: string; size: number; mime: string; kind: "video" | "image" } | null> {
+  const f = fileFromMarker(marker);
+  if (!f) return null;
+  const { markerFileSize } = await import("../pieceUpload");
+  const size = await markerFileSize(marker).catch(() => null);
+  return { ...f, size: size ?? 0 };
 }
 
 /** N2 — system promotes tell the creator in plain words (creator taps need no row). */
@@ -860,7 +951,7 @@ export async function sweepCreatorSilent(now = new Date()): Promise<{ nudged: nu
   const out = { nudged: 0, promoted: 0 };
   const rows = returnedRows<any>(await CreateDBConnection.query(
     `SELECT d.id, d.version, d.due_at, d.application_id, d.ai_check_result,
-            a.creator_id, c.name AS campaign_name, b.name AS brand_name
+            a.creator_id, a.status AS app_status, c.name AS campaign_name, b.name AS brand_name
        FROM application_deliverable d
        JOIN campaign_application a ON a.id = d.application_id
        JOIN campaign c ON c.id = d.campaign_id
@@ -872,6 +963,11 @@ export async function sweepCreatorSilent(now = new Date()): Promise<{ nudged: nu
   for (const r of rows) {
     const res = r.ai_check_result ?? {};
     if (Number(res.version) !== Number(r.version)) continue; // stale result, new version in flight
+    // A wrap or removal ends the wait now; promoteToBrand parks the piece (1-Nov audit).
+    if (r.app_status !== "active") {
+      await promoteToBrand(Number(r.id), Number(r.version), "system", "auto:creator_no_action").catch(() => null);
+      continue;
+    }
     const checkedAt = new Date(String(res.checked_at)).getTime();
     if (!Number.isFinite(checkedAt)) continue;
     const dayAfter = checkedAt + 24 * 3_600_000;

@@ -1,3 +1,5 @@
+// Mirrored from the public hackathon repo oocm-campaign-autopilot (src/draftCheck/check.ts).
+// Edit there first, then copy here, so the two stay identical.
 /**
  * The draft checker: watches a creator's draft video and checks it against the
  * brand's brief, with evidence for every verdict.
@@ -15,12 +17,14 @@
  *
  * Built during the Meta Global AI Developer Hackathon (27 Oct to 4 Nov 2026).
  */
+import logger from "../../utils/logger";
 import { execFile } from "node:child_process";
 import { mkdtemp, open, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { deleteFile, respond, segment, transcribe, uploadFile, type MetaUsage, type SamBox, type Transcript } from "../meta/client.ts";
+import { deleteFile, respond, segment, transcribe, uploadFile, type MetaUsage, type SamBox, type Transcript } from "./client";
+import { hasDisclosure } from "../../utils/disclosure";
 
 const run = promisify(execFile);
 
@@ -33,6 +37,8 @@ export interface Brief {
   mustShow: string[];
   /** Ad disclosure (#ad, "paid partnership") required. Default true. */
   disclosureRequired?: boolean;
+  countries?: string[];
+  compensationType?: string | null;
   /** Competitor brands that must not appear or be named. */
   competitors: string[];
   /** Free-text do's and don'ts from the brand. */
@@ -78,10 +84,8 @@ export interface CheckOptions {
   model?: string;
   /** The creator's caption for the post, if any. A disclosure or brand tag there counts. */
   caption?: string | null;
+  paidPartnership?: boolean;
 }
-
-/** #ad, #sponsored, #paidpartnership, "paid partnership", #collab, विज्ञापन. */
-export const CAPTION_DISCLOSURE = /(^|\s)#(ad|ads|sponsored|paidpartnership|partner|collab)\b|paid partnership|sponsored by|विज्ञापन/i;
 
 // ── 1. prepare ─────────────────────────────────────────────────────────────
 
@@ -109,7 +113,8 @@ async function containerOf(path: string): Promise<"mov" | "matroska"> {
 }
 
 // Every ffmpeg run is time-boxed and killed hard, so a broken file can't hold the worker.
-const FF_OPTS = { timeout: 240_000, killSignal: "SIGKILL" as const, maxBuffer: 1 << 26 };
+// 8 minutes: a 1440p 60fps HEVC file must finish the 720p re-encode.
+const FF_OPTS = { timeout: 480_000, killSignal: "SIGKILL" as const, maxBuffer: 1 << 26 };
 const FF_BASE = ["-nostdin", "-hide_banner", "-loglevel", "error", "-protocol_whitelist", "file"];
 
 /** Re-encode to a 720p H.264 MP4 (and a 16 kHz WAV) in a temp dir. Caller removes `dir`. */
@@ -206,15 +211,15 @@ const SPARK_SCHEMA = {
       language: { type: "string" },
       rules: {
         type: "array",
-        description: "Each do/don't from the brief that the video clearly breaks, leaving out must-say lines, the ad disclosure and competitors (those are checked separately). Empty if none.",
+        description: "Each do/don't from the brief that the video clearly breaks, leaving out must-say lines, the ad disclosure and competitors (those are checked separately). Quote the exact words said or shown for each. Empty if none.",
         items: {
           type: "object",
           additionalProperties: false,
-          required: ["rule", "at_s", "why"],
-          properties: { rule: { type: "string" }, at_s: { type: ["number", "null"] }, why: { type: "string" } },
+          required: ["rule", "at_s", "why", "quote"],
+          properties: { rule: { type: "string" }, at_s: { type: ["number", "null"] }, why: { type: "string" }, quote: { type: ["string", "null"] } },
         },
       },
-      summary: { type: "string", description: "Two plain sentences to the creator: what works, and the one thing to fix first." },
+      summary: { type: "string", description: "Two plain sentences to the creator: what works, and the one thing to fix first. It must match the item verdicts: if anything failed or needs a look, name it — never 'nothing to fix', 'all good' or 'ready'. The draft still goes to the brand for approval: say it 'can go to the brand', never 'ready to post'." },
     },
   },
 };
@@ -227,12 +232,14 @@ An ad disclosure is "#ad", "ad", "advertisement", "paid partnership", "sponsored
 List every other brand that is named aloud or visibly shown, under competitors.
 A brand-name line counts as shown_on_screen if the brand's name or logo is on screen.
 If the creator's caption is given, it is part of the post: an ad disclosure written there counts.
-Write the summary in plain, warm English to the creator.`;
+Write the summary in plain, warm English to the creator.
+The summary must match the item verdicts: if anything failed or needs a look, say what needs fixing or a look — never "nothing to fix", "all good" or "ready".
+The draft still goes to the brand for approval after your check: say it "can go to the brand", never "ready to post".`;
 
 function briefText(b: Brief): string {
   return [
     `Brand: ${b.brand}`,
-    `Product: ${b.product}`,
+    `Product: ${b.product?.trim() || "(no physical product — the brand itself is what is shown and said)"}`,
     `Must say: ${b.mustSay.length ? b.mustSay.map((s, i) => `${i + 1}. ${s}`).join(" ") : "nothing specific"}`,
     `Must show: ${b.mustShow.length ? b.mustShow.join("; ") : "the product"}`,
     `Ad disclosure required: ${b.disclosureRequired === false ? "no" : "yes"}`,
@@ -257,6 +264,92 @@ export function briefKeywords(b: Brief): string[] {
     }
   }
   return [...words].filter(Boolean);
+}
+
+/** What to call the product in verdict copy when the brief leaves it blank
+ * (piece 799: the detail read " is on screen…" with a leading blank). */
+export function displayProduct(brief: Brief): string {
+  return brief.product?.trim() || brief.brand?.trim() || "The product";
+}
+
+/** One item per don't from the brand ("no …; keep it …" prose, numbered or
+ * bulleted). The model only reports the rules it thinks broke, so each don't
+ * is matched back by word overlap; the matched model rule is consumed. */
+export function splitDonts(donts?: string | null): string[] {
+  if (!donts) return [];
+  return String(donts)
+    .split(/\n+|;\s*|[•\-–]\s+/)
+    .flatMap((part) => part.split(/\s*\d+[.)]\s+/))
+    .flatMap((part) => part.split(/\.\s+(?=[A-Z])/))
+    .map((s) => s.trim().replace(/\s+/g, " ").replace(/\.$/, "").trim())
+    .filter((s) => s.length > 1)
+    .slice(0, 6);
+}
+
+const dontWords = (s: string) =>
+  new Set(norm(s).split(" ").filter((w) => w.length > 2));
+
+/** Share of the don't's significant words also in the model's rule + why. */
+export function dontRuleOverlap(dont: string, rule: { rule: string; why: string }): number {
+  const d = dontWords(dont);
+  if (!d.size) return 0;
+  const r = new Set([...dontWords(rule.rule), ...dontWords(rule.why ?? "")]);
+  let hit = 0;
+  for (const w of d) if (r.has(w)) hit++;
+  return hit / d.size;
+}
+
+export interface ModelRule {
+  rule: string;
+  at_s: number | null;
+  why: string;
+  quote?: string | null;
+}
+
+/**
+ * One scored item per don't (key `dont_<n>`, label "Doesn't: <short>").
+ * A don't the model clearly flagged (overlap ≥ 0.5) fails with its time and
+ * quote; a weak match needs a human eye; the rest pass. Returns the items and
+ * the model-rule indexes they consumed, so the caller doesn't report the
+ * same break twice (once as a don't, once as a generic rule).
+ */
+export function scoreDonts(donts: string[], rules: ModelRule[]): { items: CheckItem[]; consumed: number[] } {
+  const consumed: number[] = [];
+  const items = donts.map((dont, i) => {
+    const short = dont.length > 60 ? `${dont.slice(0, 59).trimEnd()}…` : dont;
+    let best = -1;
+    let bestScore = 0;
+    rules.forEach((r, j) => {
+      if (consumed.includes(j)) return;
+      const s = dontRuleOverlap(dont, r);
+      if (s > bestScore) { bestScore = s; best = j; }
+    });
+    const base = { key: `dont_${i + 1}`, label: `Doesn't: ${short}`, sources: ["spark"] };
+    if (best >= 0 && bestScore >= 0.5) {
+      consumed.push(best);
+      const r = rules[best];
+      return {
+        ...base, verdict: "fail" as Verdict,
+        detail: `${r.why}${fmt(r.at_s)}.`,
+        at_s: r.at_s ?? null, until_s: null, quote: r.quote ?? null, confidence: 0.75,
+      };
+    }
+    if (best >= 0 && bestScore >= 0.25) {
+      consumed.push(best);
+      const r = rules[best];
+      return {
+        ...base, verdict: "needs_review" as Verdict,
+        detail: `Might break "${short}"${fmt(r.at_s)} — please check by eye.`,
+        at_s: r.at_s ?? null, until_s: null, quote: r.quote ?? null, confidence: 0.5,
+      };
+    }
+    return {
+      ...base, verdict: "pass" as Verdict,
+      detail: `Keeps clear of "${short}".`,
+      at_s: null, until_s: null, quote: null, confidence: 0.7,
+    };
+  });
+  return { items, consumed };
 }
 
 /** Speech models sometimes stutter a word ("is is"). Drop immediate repeats for display. */
@@ -367,7 +460,7 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
         effort: "medium",
         maxOutputTokens: 12000,
       }),
-      prep.wav ? readFile(prep.wav).then((w) => transcribe(w, languages, briefKeywords(brief))).catch(() => null) : Promise.resolve(null),
+      prep.wav ? readFile(prep.wav).then((w) => transcribe(w, languages, briefKeywords(brief))).catch((e: any) => { logger.warn(`draft-check: transcribe failed: ${String(e?.message ?? e).slice(0, 200)}`); return null; }) : Promise.resolve(null),
     ]);
     const s = spark.data;
     if (process.env.DRAFTCHECK_DEBUG) console.error("SPARK", JSON.stringify({ must_say: s.must_say, disclosure: s.disclosure }));
@@ -382,11 +475,12 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
           const r = await segment({ file_id: fileId! }, String(s.product_phrase).split(/\s+/).slice(0, 3).join(" "));
           boxes = r.boxes.filter((b) => b.conf == null || b.conf >= 0.4);
           samFrames = Number(r.usage.video_frames_processed ?? 0);
-        } catch {
-          /* SAM is a second opinion; its failure never sinks the check */
+        } catch (e: any) {
+          // SAM is a second opinion; its failure never sinks the check
+          logger.warn(`draft-check: SAM failed: ${String(e?.message ?? e).slice(0, 200)}`);
         }
       })(),
-      verifyHeard(said, brief.mustSay, o.model).catch(() => null),
+      verifyHeard(said, brief.mustSay, o.model).catch((e: any) => { logger.warn(`draft-check: verifyHeard failed: ${String(e?.message ?? e).slice(0, 200)}`); return null; }),
     ]);
 
     if (process.env.DRAFTCHECK_DEBUG) console.error("HEARD", JSON.stringify(said), JSON.stringify(check ? [...check.lines] : null));
@@ -396,26 +490,27 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
     {
       const sam = samSeconds(boxes, prep.fps);
       const sparkSays = !!s.product_on_screen?.shown;
+      const product = displayProduct(brief);
       let verdict: Verdict;
       let sources = ["spark"];
       let detail: string;
       if (sparkSays && sam) {
         verdict = "pass";
         sources.push("sam");
-        detail = `${brief.product} is on screen from ${sam.from.toFixed(1)}s to ${sam.to.toFixed(1)}s (tracked in ${sam.frames} frames).`;
+        detail = `${product} is on screen from ${sam.from.toFixed(1)}s to ${sam.to.toFixed(1)}s (tracked in ${sam.frames} frames).`;
       } else if (sparkSays && (o.noSam || !s.product_phrase)) {
         verdict = "pass";
-        detail = `${brief.product} is on screen${fmt(s.product_on_screen.from_s)}: ${s.product_on_screen.how}`;
+        detail = `${product} is on screen${fmt(s.product_on_screen.from_s)}: ${s.product_on_screen.how}`;
       } else if (sparkSays) {
         verdict = "needs_review";
-        detail = `The video seems to show ${brief.product}${fmt(s.product_on_screen.from_s)}, but the object tracker could not find it. Please check by eye.`;
+        detail = `The video seems to show ${product}${fmt(s.product_on_screen.from_s)}, but the object tracker could not find it. Please check by eye.`;
       } else if (sam) {
         verdict = "needs_review";
         sources = ["sam"];
-        detail = `Something like ${brief.product} is tracked from ${sam.from.toFixed(1)}s, but it is not clearly the product. Please check by eye.`;
+        detail = `Something like ${product} is tracked from ${sam.from.toFixed(1)}s, but it is not clearly the product. Please check by eye.`;
       } else {
         verdict = "fail";
-        detail = `${brief.product} never appears on screen. Show it clearly, ideally in the first few seconds.`;
+        detail = `${product} never appears on screen. Show it clearly, ideally in the first few seconds.`;
       }
       items.push({ key: "product_on_screen", label: "Product on screen", verdict, detail, at_s: sam?.from ?? s.product_on_screen?.from_s ?? null, until_s: sam?.to ?? s.product_on_screen?.to_s ?? null, quote: null, sources, confidence: verdict === "pass" ? (sources.length > 1 ? 0.95 : 0.75) : verdict === "fail" ? 0.8 : 0.5 });
     }
@@ -461,7 +556,7 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
 
     // Must-show items (besides the product): Spark only, and only what the brief lists.
     (s.must_show ?? []).slice(0, brief.mustShow.length).forEach((m: any, i: number) => {
-      items.push({ key: `must_show_${i + 1}`, label: `Shows: ${m.item}`, verdict: m.shown ? "pass" : "fail", detail: m.shown ? `Shown${fmt(m.at_s)}.` : `Not shown: ${m.item}.`, at_s: m.at_s ?? null, until_s: null, quote: null, sources: ["spark"], confidence: 0.7 });
+      items.push({ key: `must_show_${i + 1}`, label: `Shows: ${m.item}`, verdict: m.shown ? "pass" : "fail", detail: m.shown ? `${m.item} is visible in the video.` : `Not shown: ${m.item}.`, at_s: m.at_s ?? null, until_s: null, quote: null, sources: ["spark"], confidence: 0.7 });
     });
 
     // Ad disclosure: spoken claims are checked against the transcript.
@@ -472,7 +567,7 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
       if (heardDisclosure) d.quote = heardDisclosure;
       let verdict: Verdict;
       const sources = ["spark"];
-      const inCaption = !!o.caption && CAPTION_DISCLOSURE.test(o.caption);
+      const inCaption = hasDisclosure(o.caption ?? "", brief.countries, o.paidPartnership, brief.compensationType);
       if (d.on_screen || spokenOk || (d.spoken && !heard) || inCaption) {
         verdict = "pass";
         if (spokenOk) sources.push("transcript");
@@ -522,10 +617,20 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
       }
     }
 
-    // Brand rules the video breaks.
-    (s.rules ?? []).forEach((r: any, i: number) => {
-      items.push({ key: `rule_${i + 1}`, label: `Brief rule: ${r.rule}`, verdict: "fail", detail: `${r.why}${fmt(r.at_s)}.`, at_s: r.at_s ?? null, until_s: null, quote: null, sources: ["spark"], confidence: 0.65 });
-    });
+    // The brand's don'ts, one scored item per don't — they were in the prompt
+    // but never scored. A model rule matched to a don't is consumed here, so
+    // the same break is not reported twice (generic rule items below skip it).
+    {
+      const modelRules: ModelRule[] = (s.rules ?? []).map((r: any) => ({
+        rule: String(r.rule ?? ""), at_s: r.at_s ?? null, why: String(r.why ?? ""), quote: r.quote ?? null,
+      }));
+      const { items: dontItems, consumed } = scoreDonts(splitDonts(brief.donts), modelRules);
+      items.push(...dontItems);
+      (s.rules ?? []).forEach((r: any, i: number) => {
+        if (consumed.includes(i)) return;
+        items.push({ key: `rule_${i + 1}`, label: `Brief rule: ${r.rule}`, verdict: "fail", detail: `${r.why}${fmt(r.at_s)}.`, at_s: r.at_s ?? null, until_s: null, quote: r.quote ?? null, sources: ["spark"], confidence: 0.65 });
+      });
+    }
 
     // Language, when the brand asked for one.
     if (brief.language) {
@@ -535,7 +640,7 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
 
     return {
       items,
-      summary: String(s.summary ?? ""),
+      summary: sanitizeSummary(String(s.summary ?? ""), items),
       durationS: prep.durationS,
       transcript: heard,
       productBoxes: boxes,
@@ -553,6 +658,33 @@ export async function checkDraft(video: Uint8Array | { path: string }, brief: Br
 function addUsage(a: MetaUsage, b?: MetaUsage): MetaUsage {
   if (!b) return a;
   return { input_tokens: (a.input_tokens ?? 0) + (b.input_tokens ?? 0), output_tokens: (a.output_tokens ?? 0) + (b.output_tokens ?? 0), total_tokens: (a.total_tokens ?? 0) + (b.total_tokens ?? 0) };
+}
+
+/**
+ * Demo-video bugs (1-Nov): the model summary sometimes reads all-clear
+ * ("nothing needs fixing", "ready") while an item is fail/needs_review, and
+ * says "ready to post" although the draft still goes to the brand for
+ * approval. The prompt (INSTRUCTIONS + schema) now forbids both, and this
+ * guard enforces it deterministically: whenever ANY item is fail or
+ * needs_review the summary is built in code from the items — the model's
+ * words are never trusted in that case, no matter how honest they read —
+ * and "ready to post" always becomes "can go to the brand".
+ *
+ * Door 1 (1-Nov): the earlier ALL_CLEAR_RE allow-list is gone. Matching a
+ * fixed set of all-clear phrases meant any new phrasing ("Great work,
+ * everything checks out", "You're good") sailed through untouched while an
+ * item needed work. The rule is now unconditional: issues present → built
+ * summary, no issues → the model's summary (with the post-phrase fix).
+ */
+export function sanitizeSummary(summary: string, items: Pick<CheckItem, "label" | "detail" | "verdict">[]): string {
+  const raw = String(summary ?? "");
+  const firstIssue = items.find((i) => i.verdict === "fail") ?? items.find((i) => i.verdict === "needs_review");
+  if (!firstIssue) {
+    if (!raw.trim()) return "Looks good — it can go to the brand.";
+    return raw.replace(/ready to post/gi, "can go to the brand");
+  }
+  const tail = firstIssue.verdict === "fail" ? "Fix that and it can go to the brand." : "Give that a look, then it can go to the brand.";
+  return `${firstIssue.label} — ${firstIssue.detail} ${tail}`;
 }
 
 /** Shape the web app already renders: { key: { pass, detail } }, plus the evidence it ignores. */
@@ -606,5 +738,23 @@ export function reportNumbers(r: DraftCheckResult, brand: string): ReportNumbers
     disclosed: disclosure ? disclosure.verdict === "pass" : null,
     disclosure_how: Array.from(new Set(how)),
     other_brands: others ? others.detail.replace(/^Also (named|shown): /, "").replace(/\. Not on the brief's banned list\.$/, "").split(", ").filter(Boolean) : [],
+  };
+}
+
+/** Report totals over the pieces Muse Spark checked. Null when none were. */
+export function aiWatchSummary(watches: any[]) {
+  const w = watches.filter(Boolean);
+  if (!w.length) return null;
+  const avg = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : null);
+  const nums = (k: string) => w.map((x) => x[k]).filter((v) => typeof v === "number") as number[];
+  return {
+    pieces: w.length,
+    product_s_avg: avg(nums("product_s")),
+    product_share_avg: avg(nums("product_share").map((v) => v * 100)),
+    brand_first_s_avg: avg(nums("brand_first_s")),
+    brand_in_first_3s: nums("brand_first_s").filter((v) => v <= 3).length,
+    disclosed: w.filter((x) => x.disclosed === true).length,
+    from_live: w.filter((x) => x.source === "ai_meta_live").length,
+    source: "ai_meta_draft",
   };
 }
