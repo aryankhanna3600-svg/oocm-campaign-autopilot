@@ -37,6 +37,12 @@ Every commit below is in this repo's history (`git log`):
 
 On top of that, the production Meta-model code written in the same window was copied here verbatim (see "Live code, wired into OOCM"): `src/meta/` (draftCheckQueue, creatorFitRunner, liveCheck, oneScore, pulseReels, safetyFlags), `src/discover/creatorsForYou.ts`, `src/agent/campaignAgent.ts` (`scripts/agent-replay.ts` is also production code but was not recopied in this round — unchanged since 1-Nov).
 
+## Runtime models
+
+Every model this project calls at runtime is a Meta model: Muse Spark 1.3, Muse Voice Transcribe 1.0 and SAM 3.1 on the Meta Model API, Muse Image for the storyboard, and Muse Spark Open on Fireworks for the open-weight lane.
+
+One disclosed exception: `src/builder/modelPath.ts` is the switch that moves OOCM's pre-existing campaign builder onto Muse. If a Muse call fails, or the monthly Meta budget cap is reached, that one call falls back to OOCM's older builder model, and the fallback is logged. The demo campaign (3457, builder session 178) ran on Muse Spark 1.3 at every step, with no fallback.
+
 ## Meta models and their real job
 
 | model | real job in this repo |
