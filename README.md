@@ -6,7 +6,7 @@ OOCM ([outofcontextmarketing.com](https://outofcontextmarketing.com)) is a live 
 
 ## Demo video
 
-Demo (2:54): the link is in the submission form; it is added here once the upload finishes.
+Demo (2:54): https://youtu.be/PZ7O_pJrAuo
 
 What the video shows, all on production (outofcontextmarketing.com), recorded 5-Nov:
 - **Builder on Muse.** A brand pastes its website; Samaira (OOCM's builder, pre-existing) now runs on Muse Spark 1.3 and Muse Image and writes three campaigns (builder session 184, `muse-spark-1.3`, $0.22).
