@@ -1,0 +1,151 @@
+diff --git a/src/components/builder/Composer.tsx b/src/components/builder/Composer.tsx
+index e7ba4ab..1528ea4 100644
+--- a/src/components/builder/Composer.tsx
++++ b/src/components/builder/Composer.tsx
+@@ -57,13 +57,13 @@ export default function Composer({ intro, placeholder, cta }: { intro?: { title:
+     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+       {intro ? (
+         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><SamairaMark size={26} /><span style={{ ...S, fontSize: 13, fontWeight: 700, color: colors.PURPLE }}>Samaira</span></div>
++          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><SamairaMark size={26} /><span style={{ ...S, fontSize: 13, fontWeight: 700, color: colors.PURPLE }}>Samaira<span style={{ fontWeight: 500, color: colors.STONE }}> · on Meta&apos;s Muse</span></span></div>
+           <p className="m-0" style={{ ...S, fontSize: 24, lineHeight: 1.15, letterSpacing: '-.02em', fontWeight: 700, color: colors.INK }}>{intro.title} <span style={{ ...em, fontSize: 27 }}>{intro.accent}</span></p>
+           <p className="m-0" style={{ ...S, fontSize: 15, lineHeight: 1.55, color: colors.STONE }}>{intro.body}</p>
+         </div>
+       ) : (
+         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><SamairaMark size={26} /><span style={{ ...S, fontSize: 13, fontWeight: 700, color: colors.PURPLE }}>Samaira</span></div>
++          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><SamairaMark size={26} /><span style={{ ...S, fontSize: 13, fontWeight: 700, color: colors.PURPLE }}>Samaira<span style={{ fontWeight: 500, color: colors.STONE }}> · on Meta&apos;s Muse</span></span></div>
+           <p className="m-0" style={{ ...S, fontSize: 20, lineHeight: 1.2, fontWeight: 700, letterSpacing: '-.015em', color: colors.INK }}>Paste your website or a brief. <span style={{ ...em, fontSize: 22 }}>She builds the campaign.</span></p>
+         </div>
+       )}
+diff --git a/src/components/builder/HomeBuilder.tsx b/src/components/builder/HomeBuilder.tsx
+index d23f5a8..102468c 100644
+--- a/src/components/builder/HomeBuilder.tsx
++++ b/src/components/builder/HomeBuilder.tsx
+@@ -31,7 +31,7 @@ export default function HomeBuilder({ firstRun, onOff }: { firstRun: boolean; br
+     <div className="bd-builder" style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '12px 16px 0' }}>
+       {pitchNote ? <Note tone="warn"><b>Your proposal did not open.</b> {pitchNote}</Note> : null}
+       {claimed.length ? <Note tone="ok"><b>Your briefs are here.</b> The campaigns we designed from your site are waiting. <button type="button" onClick={() => navigate(`/brand/build/${claimed[0]}`)} style={{ ...S, background: 'transparent', border: 0, color: colors.BLUE, fontWeight: 700, cursor: 'pointer', padding: 0 }}>Open them →</button></Note> : null}
+-      <Composer intro={firstRun ? { title: 'Meet Samaira.', accent: 'Our AI agent.', body: "Give her your website and she'll build your campaign." } : undefined} />
++      <Composer intro={firstRun ? { title: 'Meet Samaira.', accent: "Our AI agent, on Meta's Muse.", body: "Give her your website and she'll build your campaign." } : undefined} />
+       {briefs.length ? (
+         <section style={{ borderTop: `1px solid ${colors.LINE}`, marginTop: 8 }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0 8px' }}>
+diff --git a/src/components/builder/SamairaMark.tsx b/src/components/builder/SamairaMark.tsx
+index a5406a5..c276475 100644
+--- a/src/components/builder/SamairaMark.tsx
++++ b/src/components/builder/SamairaMark.tsx
+@@ -32,6 +32,7 @@ export function WorkingStage({ lines, last, note, photos, name }: { lines: strin
+       <SamairaMark size={72} state="think" />
+       {name ? <p className="sam-name">{name}</p> : null}
+       <p key={line} className="sam-line">{line}</p>
++      <p className="sam-note">Samaira runs on Meta&apos;s Muse models.</p>
+       <p className="sam-note">{note}</p>
+     </div>
+   )
+diff --git a/src/components/chat/AiCheckBlock.tsx b/src/components/chat/AiCheckBlock.tsx
+index 25e7f46..bcec55d 100644
+--- a/src/components/chat/AiCheckBlock.tsx
++++ b/src/components/chat/AiCheckBlock.tsx
+@@ -57,7 +57,7 @@ export default function AiCheckBlock({ aiCheck, onSeek }: { aiCheck?: AiCheck |
+   if (state === 'running') {
+     return (
+       <div style={wrap}>
+-        <p style={{ margin: 0, fontSize: 12, color: MUTED, lineHeight: 1.5 }}>Checking the draft against the brief…</p>
++        <p style={{ margin: 0, fontSize: 12, color: MUTED, lineHeight: 1.5 }}>Muse is checking the draft against the brief…</p>
+       </div>
+     )
+   }
+@@ -68,7 +68,7 @@ export default function AiCheckBlock({ aiCheck, onSeek }: { aiCheck?: AiCheck |
+       <div style={wrap}>
+         <p style={{ margin: 0, fontSize: 12, color: STONE, lineHeight: 1.5 }}>
+           <span style={{ color: GOLD, fontWeight: 700, marginRight: 6 }}>?</span>
+-          Our AI couldn&apos;t check this video{why}. Review it by eye.
++          Muse couldn&apos;t check this video{why}. Review it by eye.
+         </p>
+       </div>
+     )
+@@ -87,7 +87,7 @@ export default function AiCheckBlock({ aiCheck, onSeek }: { aiCheck?: AiCheck |
+       <div style={wrap}>
+         {/* Kicker like DraftCheckLines */}
+         <p className="m-0 uppercase" style={{ fontSize: 10, color: STONE, fontWeight: 600, letterSpacing: '.14em', margin: 0 }}>
+-          Draft check <span style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 500, color: MUTED }}>· AI{checkedAt ? ` · ${when(checkedAt)}` : ''}</span>
++          Draft check <span style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 500, color: MUTED }}>· Muse by Meta{checkedAt ? ` · ${when(checkedAt)}` : ''}</span>
+         </p>
+ 
+         {summary && <p style={{ margin: '6px 0 0', fontSize: 12, lineHeight: 1.5, color: INK }}>{summary}</p>}
+diff --git a/src/components/chat/types.ts b/src/components/chat/types.ts
+index 4bff60e..793c21b 100644
+--- a/src/components/chat/types.ts
++++ b/src/components/chat/types.ts
+@@ -122,7 +122,7 @@ export const STATUS: Record<PieceStatus, { tone: Tone; label: string; creator?:
+   // Door 1 (X1): the creator's draft is with the AI check. They may resend at
+   // any time — a resubmit supersedes the running check — so the creator copy
+   // says so and UploadSheet owes a draft.
+-  ai_check:     { tone: 'review',  label: 'AI check', creator: 'AI check · resend anytime' },
++  ai_check:     { tone: 'review',  label: 'Muse check', creator: 'Muse check · resend anytime' },
+ }
+ 
+ export const toneOf = (p: Piece, rawOnly = false): Tone =>
+diff --git a/src/pages/brand/Build.tsx b/src/pages/brand/Build.tsx
+index afebef1..1477947 100644
+--- a/src/pages/brand/Build.tsx
++++ b/src/pages/brand/Build.tsx
+@@ -33,7 +33,7 @@ const Bot = ({ children, stage }: { children: React.ReactNode; label?: string; s
+   <div data-stage={stage} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', scrollMarginTop: 72 }}>
+     <SamairaMark size={26} />
+     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0, flex: 1 }}>
+-      <span style={{ ...S, fontSize: 14, fontWeight: 700, color: colors.PURPLE }}>Samaira</span>
++      <span style={{ ...S, fontSize: 14, fontWeight: 700, color: colors.PURPLE }}>Samaira<span style={{ fontWeight: 500, color: colors.STONE }}> · on Meta&apos;s Muse</span></span>
+       {children}
+     </div>
+   </div>
+diff --git a/src/pages/creator/ContentSubmit.tsx b/src/pages/creator/ContentSubmit.tsx
+index 3a0aa1d..66203ee 100644
+--- a/src/pages/creator/ContentSubmit.tsx
++++ b/src/pages/creator/ContentSubmit.tsx
+@@ -643,10 +643,10 @@ export default function ContentSubmit() {
+           const glyph = (v: string | undefined) => v === 'fail' ? '✗' : v === 'pass' ? '✓' : '?'
+           const glyphColor = (v: string | undefined) => v === 'fail' ? DANGER : v === 'pass' ? GREEN : GOLD
+           return (
+-          <section aria-label="AI check" style={{ marginTop: 20 }}>
+-            <p style={{ margin: 0, fontWeight: 700, fontSize: 11, color: BLUE, textTransform: 'uppercase', letterSpacing: '.14em' }}>AI check — before the brand</p>
++          <section aria-label="Muse check" style={{ marginTop: 20 }}>
++            <p style={{ margin: 0, fontWeight: 700, fontSize: 11, color: BLUE, textTransform: 'uppercase', letterSpacing: '.14em' }}>Muse check — before the brand</p>
+             <p style={{ margin: '8px 0 0', fontWeight: 700, fontSize: 18, letterSpacing: '-0.012em', color: INK }}>
+-              Your draft is with our AI check.
++              Muse is checking your draft.
+             </p>
+             <p style={{ margin: '6px 0 0', fontSize: 13, lineHeight: 1.5, color: STONE }}>
+               {brandName} hasn’t seen it yet — you see the fixes here first.
+@@ -798,7 +798,7 @@ export default function ContentSubmit() {
+                 : p.content_status === 'submitted' ? 'Live post in review'
+                 : p.content_status === 'rejected' ? 'Post needs a fix'
+                 : p.draft_status === 'draft_approved' ? 'Approved — post it'
+-                : p.draft_status === 'checking' ? 'AI check — brand hasn’t seen it'
++                : p.draft_status === 'checking' ? 'Muse check — brand hasn’t seen it'
+                 : p.draft_status === 'draft_submitted' ? 'Draft in review'
+                 : p.draft_status === 'draft_rejected' ? 'Draft needs changes'
+                 : 'Draft due'
+diff --git a/src/pages/creator/MyWork.tsx b/src/pages/creator/MyWork.tsx
+index 91cef26..03b1383 100644
+--- a/src/pages/creator/MyWork.tsx
++++ b/src/pages/creator/MyWork.tsx
+@@ -662,7 +662,7 @@ function ContentFlowRow({ stage, note, progress, direct }: { stage: ContentStage
+     // Door 1 Nice: open type, no tinted box — same rule as the fix card.
+     return (
+       <div className="mt-3" style={{ borderTop: `1px solid ${LINE}`, paddingTop: 10 }}>
+-        <p className="text-[11px] font-semibold" style={{ color: BLUE }}>AI check — before the brand</p>
++        <p className="text-[11px] font-semibold" style={{ color: BLUE }}>Muse check — before the brand</p>
+         <p className="text-[11px] mt-0.5 leading-snug" style={{ color: STONE }}>Our AI is reading your draft — you see the fixes first. The brand hasn’t seen it yet.</p>
+       </div>
+     )
+@@ -761,7 +761,7 @@ function ActionButton({ app, navigate }: { app: Application; navigate: (to: stri
+           : stage === 'post_direct' ? 'Post & send proof'
+           : stage === 'draft_rejected' ? 'Resubmit draft'
+           : stage === 'content_rejected' ? 'Fix your post'
+-          : stage === 'ai_check' ? 'See the AI check'
++          : stage === 'ai_check' ? 'See the Muse check'
+           : stage === 'in_progress' ? 'Continue'
+           : 'Submit draft'}
+       </button>

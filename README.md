@@ -4,6 +4,16 @@ A business pastes its website. Meta's models run the whole creator campaign: the
 
 OOCM ([outofcontextmarketing.com](https://outofcontextmarketing.com)) is a live creator-marketing platform. This repository holds **only the code written during the Meta Global AI Developer Hackathon (27 Oct to 4 Nov 2026)**. It plugs into OOCM's existing product, which was built before the event and is not part of this submission.
 
+## Demo video
+
+Demo (2:54): DEMO_VIDEO_LINK
+
+What the video shows, all on production (outofcontextmarketing.com), recorded 5-Nov:
+- **Builder on Muse.** A brand pastes its website; Samaira (OOCM's builder, pre-existing) now runs on Muse Spark 1.3 and Muse Image and writes three campaigns (builder session 184, `muse-spark-1.3`, $0.22).
+- **Muse creator fit.** The brand sees a fit score Muse made from the creator's last reels (68, "good").
+- **Muse draft check, fail then pass** (campaign 3500). Draft v1: Hindi at 0:05 and the "free for 14 days" line never said, each with the second and the quote; 86 s, $0.21. The brand asks for changes. Draft v2: 14 of 14 checks pass; 100 s, $0.22. The brand approves; the creator sees the same check.
+- Waits are cut and labelled "real time · sped up". Every "Built this week" caption marks event work.
+
 ## The problem
 
 Brands pay creators for videos, then watch the wrong thing go live: the brand name unsaid, the disclosure missing, a competitor's product on screen. Checking every draft by hand does not scale past a handful of creators — and OOCM is built for lakhs of them with one operator. So the checking itself has to be software: watch the video, listen to it, track the product through it, and pass a draft only when two independent sources agree it meets the brief. When they disagree, a person decides — the machine never guesses.
@@ -34,6 +44,8 @@ Every commit below is in this repo's history (`git log`):
 | 3-Nov | `2df849e` | Draft check: 500 MB cap, ffmpeg 480 s, don'ts scored, product-name fallback — API PR #487 |
 | 3-Nov | `05faf2e` | Admin: re-run AI draft check on a piece already with the brand — API PR #488 |
 | 3-Nov | `a0406be` | AI check card in chat — Web PR #150, App PR #65 |
+| 4-Nov | — | Live builder switched to Muse for every brand (server flag, no code change) |
+| 5-Nov | — | Muse named on every screen where it works: draft check card, builder, creator fit — Web PR #153 + #154, App PR #67 (`patches/web-pr153-muse-labels.diff`, `patches/web-pr154-muse-fit-label.diff`, `patches/app-pr67-muse-labels.diff`) |
 
 On top of that, the production Meta-model code written in the same window was copied here verbatim (see "Live code, wired into OOCM"): `src/meta/` (draftCheckQueue, creatorFitRunner, liveCheck, oneScore, pulseReels, safetyFlags), `src/discover/creatorsForYou.ts`, `src/agent/campaignAgent.ts` (`scripts/agent-replay.ts` is also production code but was not recopied in this round — unchanged since 1-Nov).
 
@@ -128,7 +140,7 @@ Separately, campaign 3457 was built by Muse Spark 1.3 end to end, at a cost of $
 
 ## Who wrote what
 
-The code was written with Claude Code, by one founder working with AI. From 31-Oct, Claude Code ran on Meta's Muse models for the main builds (Spark 1.3 on the Meta API, Spark Open on Fireworks): Door 1 (creator-first draft check), the campaign agent, and the AI check card in the chat on web and app. The first draft checker and creator fit (27-28 Oct), the builder fixes (2-3 Nov), the admin re-check and all review fixes were written by Claude Opus. Every model the product calls at runtime is a Meta model (see Runtime models).
+The code was written with Claude Code, by one founder working with AI. From 31-Oct, Claude Code ran on Meta's Muse models for the main builds (Spark 1.3 on the Meta API, Spark Open on Fireworks): Door 1 (creator-first draft check), the campaign agent, the AI check card in the chat on web and app, and the 5-Nov Muse labels (Spark Open on Fireworks). The first draft checker and creator fit (27-28 Oct), the builder fixes (2-3 Nov), the admin re-check and all review fixes were written by Claude Opus. Every model the product calls at runtime is a Meta model (see Runtime models).
 
 ## Built before the event, not part of this submission
 The builder's core files (`options.ts`, `session.ts`, `notify.ts`) were written on 14-Oct, before the hackathon. They are not in this repo. The hackathon changes to them are in `patches/` as plain diffs, so only the new work is shown.

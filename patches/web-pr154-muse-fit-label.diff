@@ -1,0 +1,19 @@
+diff --git a/src/components/MetaEvidence.tsx b/src/components/MetaEvidence.tsx
+index ae1b030..5454153 100644
+--- a/src/components/MetaEvidence.tsx
++++ b/src/components/MetaEvidence.tsx
+@@ -50,12 +50,12 @@ export function ReelFitLines({ fit, full, rule = true, teaser = false, hideScore
+     <div style={{ ...(rule ? { borderTop: `1px solid ${LINE}`, paddingTop: 8 } : {}), marginBottom: 10 }}>
+       <p className="m-0" style={{ fontSize: 12, color: INK, fontFeatureSettings: '"tnum"' }}>
+         {hideScore ? (
+-          <span style={{ color: MUTED, fontSize: 10.5 }}>AI, from their last reels{fit.generated_at ? ` · ${when(fit.generated_at)}` : ''}</span>
++          <span style={{ color: MUTED, fontSize: 10.5 }}>Muse, from their last reels{fit.generated_at ? ` · ${when(fit.generated_at)}` : ''}</span>
+         ) : (
+           <>
+             <span style={{ fontWeight: 700 }}>Reel fit {Math.round(fit.score)}</span>
+             <span style={{ color: VERDICT_COLOR[fit.verdict] ?? INK, fontWeight: 600 }}> · {fit.verdict}</span>
+-            <span style={{ color: MUTED, fontSize: 10.5 }}> · AI, from their last reels{fit.generated_at ? ` · ${when(fit.generated_at)}` : ''}</span>
++            <span style={{ color: MUTED, fontSize: 10.5 }}> · Muse, from their last reels{fit.generated_at ? ` · ${when(fit.generated_at)}` : ''}</span>
+           </>
+         )}
+       </p>

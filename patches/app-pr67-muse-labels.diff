@@ -1,0 +1,70 @@
+diff --git a/src/app/submit/[id].tsx b/src/app/submit/[id].tsx
+index 8bd357a..c2ea097 100644
+--- a/src/app/submit/[id].tsx
++++ b/src/app/submit/[id].tsx
+@@ -599,12 +599,12 @@ export default function ContentSubmit() {
+           const glyph = (v: string | undefined) => v === 'fail' ? '✗' : v === 'pass' ? '✓' : '?'
+           const glyphColor = (v: string | undefined) => v === 'fail' ? OOCM.danger : v === 'pass' ? OOCM.success : OOCM.gold
+           return (
+-          <View style={{ marginBottom: 14 }} accessibilityLabel="AI check">
++          <View style={{ marginBottom: 14 }} accessibilityLabel="Muse check">
+             <Text style={{ fontFamily: F.sansBold, fontSize: 11, letterSpacing: 1.2, textTransform: 'uppercase', color: OOCM.blue }}>
+-              AI check — before the brand
++              Muse check — before the brand
+             </Text>
+             <Text style={{ fontFamily: F.sansBold, fontSize: 18, letterSpacing: -0.2, color: OOCM.ink, marginTop: 8 }}>
+-              Your draft is with our AI check.
++              Muse is checking your draft.
+             </Text>
+             <Text style={[s.muted13, { marginTop: 6, marginBottom: 4 }]}>
+               {brandName} hasn’t seen it yet — you see the fixes here first.
+diff --git a/src/components/chat/AiCheckBlock.tsx b/src/components/chat/AiCheckBlock.tsx
+index daabbe2..87f43ac 100644
+--- a/src/components/chat/AiCheckBlock.tsx
++++ b/src/components/chat/AiCheckBlock.tsx
+@@ -39,17 +39,17 @@ export default function AiCheckBlock({
+ 
+   if (aiCheck.state === 'running') {
+     return (
+-      <View style={s.wrap} accessibilityLabel="AI check">
+-        <Text style={s.muted}>Checking the draft against the brief…</Text>
++      <View style={s.wrap} accessibilityLabel="Muse check">
++        <Text style={s.muted}>Muse is checking the draft against the brief…</Text>
+       </View>
+     )
+   }
+ 
+   if (aiCheck.state === 'unchecked') {
+     return (
+-      <View style={s.wrap} accessibilityLabel="AI check">
++      <View style={s.wrap} accessibilityLabel="Muse check">
+         <Text style={s.muted}>
+-          Our AI couldn’t check this video{aiCheck.why ? ` — ${aiCheck.why}` : ''}. Review it by eye.
++          Muse couldn’t check this video{aiCheck.why ? ` — ${aiCheck.why}` : ''}. Review it by eye.
+         </Text>
+       </View>
+     )
+@@ -94,8 +94,8 @@ export default function AiCheckBlock({
+   const hasTranscript = typeof aiCheck.transcript === 'string' && aiCheck.transcript.trim().length > 0
+ 
+   return (
+-    <View style={s.wrap} accessibilityLabel="AI check">
+-      <Text style={s.kicker}>DRAFT CHECK · AI{time ? ` · ${time}` : ''}</Text>
++    <View style={s.wrap} accessibilityLabel="Muse check">
++      <Text style={s.kicker}>DRAFT CHECK · MUSE BY META{time ? ` · ${time}` : ''}</Text>
+       {aiCheck.summary ? <Text style={s.summary}>{aiCheck.summary}</Text> : null}
+ 
+       {sorted.map((it, i) => {
+diff --git a/src/lib/pieces.ts b/src/lib/pieces.ts
+index e28d689..cf1443a 100644
+--- a/src/lib/pieces.ts
++++ b/src/lib/pieces.ts
+@@ -36,7 +36,7 @@ export function pieceStatus(p: any): PieceStatus {
+ 
+ export const STATUS: Record<PieceStatus, { tone: 'todo' | 'review' | 'changes' | 'post' | 'live' | 'waived'; label: string }> = {
+   draft_due:    { tone: 'todo',    label: 'Draft due' },
+-  checking:     { tone: 'review',  label: 'AI check…' },
++  checking:     { tone: 'review',  label: 'Muse checking…' },
+   in_review:    { tone: 'review',  label: 'In review' },
+   changes:      { tone: 'changes', label: 'Changes asked' },
+   approved:     { tone: 'post',    label: 'Approved · post it' },
